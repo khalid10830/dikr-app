@@ -34,7 +34,19 @@ export function OnboardingScreen({ lang, onChangeLang, onFinish }: Props) {
           <img src="/icon.png" alt="Dikr icon" className="w-full h-full object-cover rounded-full" />
         </div>
         <h1 className="text-3xl font-bold text-white mb-2">{t(lang, 'onboardingTitle')}</h1>
-        <p className="text-slate-400 mb-10">{t(lang, 'onboardingDesc')}</p>
+        <p className="text-slate-400 mb-6">{t(lang, 'onboardingDesc')}</p>
+
+        {/* Pitch / Hook */}
+        <div className="w-full bg-blue-950/40 border border-blue-500/20 rounded-2xl p-5 mb-8 text-left" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+          <div className="flex gap-3 items-start">
+            <span className="text-2xl mt-0.5">🕌</span>
+            <div className="flex flex-col gap-2">
+              {t(lang, 'onboardingPitch').split('\n').map((line, i) => (
+                <p key={i} className={`text-sm leading-relaxed ${i === 0 ? 'text-slate-200 font-medium' : 'text-slate-400'}`}>{line}</p>
+              ))}
+            </div>
+          </div>
+        </div>
 
         {/* Feature Cards */}
         <div className="flex flex-col gap-4 w-full mb-10 text-left" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
