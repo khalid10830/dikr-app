@@ -1,0 +1,85 @@
+import { ArrowLeft, Play, Square, Check, RotateCcw } from 'lucide-react';
+import type { DikrItem, Language } from '../types';
+import { t } from '../i18n';
+
+interface Props {
+  lang: Language;
+  dikr: DikrItem;
+  elapsedTime: number;
+  isRunning: boolean;
+  onToggle: () => void;
+  onBack: () => void;
+  onSave: (durationMs: number) => void;
+  onFinish: () => void;
+  onReset: () => void;
+}
+
+export function CalibrationScreen({ lang, dikr, elapsedTime, isRunning, onToggle, onBack, onSave, onReset, onFinish }: Props) {
+  
+  const handleSave = () => {
+    if (elapsedTime > 500) {
+      onSave(elapsedTime);
+      onFinish();
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-between w-full min-h-screen max-w-md p-6 pb-12 animate-in slide-in-from-right-4 duration-300">
+      <header className="w-full flex items-center justify-between">
+        <button onClick={onBack} className={`p-2 ${lang === 'ar' ? '-mr-2' : '-ml-2'} text-slate-400 hover:text-white transition-colors`}>
+          <ArrowLeft size={24} className={lang === 'ar' ? 'rotate-180' : ''} />
+        </button>
+        <span className="text-sm font-medium text-slate-300 uppercase tracking-wider">{t(lang, 'calibrationTitle')}</span>
+        <div className="w-10" />
+      </header>
+
+      <main className="flex flex-col items-center w-full flex-1 justify-center mt-8">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl font-bold text-white mb-2">{dikr.name}</h2>
+          <p className="text-slate-400 text-sm max-w-[280px] mx-auto leading-relaxed">
+            {t(lang, 'calibrationInstruct', { action: isRunning ? 'Stop' : 'Start' })} <b>{t(lang, 'calibrationOnce')}</b> {t(lang, 'calibrationEnd')} <b>Stop</b>.
+          </p>
+        </div>
+
+        <div className="text-6xl font-light tabular-nums text-blue-400 mb-12" dir="ltr">
+          {(elapsedTime / 1000).toFixed(2)}s
+        </div>
+
+        <div className="flex items-center gap-6" dir="ltr">
+          <button
+            onClick={onReset}
+            disabled={isRunning || elapsedTime === 0}
+            className="flex items-center justify-center w-14 h-14 rounded-full bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors disabled:opacity-50"
+          >
+            <RotateCcw size={20} />
+          </button>
+
+          <button
+            onClick={onToggle}
+            className={`relative flex items-center justify-center w-24 h-24 rounded-full shadow-2xl transition-all duration-300 ${
+              isRunning 
+                ? 'bg-red-500/20 text-red-500 hover:bg-red-500/30 border-2 border-red-500' 
+                : 'bg-blue-600 text-white hover:bg-blue-500 hover:scale-105 active:scale-95'
+            }`}
+          >
+            {isRunning ? <Square size={36} fill="currentColor" /> : <Play size={40} fill="currentColor" className="ml-2" />}
+          </button>
+          
+          <div className="w-14 h-14" />
+        </div>
+
+        {!isRunning && elapsedTime > 0 && (
+          <div className="mt-16 w-full animate-in fade-in zoom-in duration-300">
+            <button
+              onClick={handleSave}
+              className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white py-4 rounded-xl font-medium transition-colors"
+            >
+              <Check size={20} />
+              {t(lang, 'saveRythm')}
+            </button>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}

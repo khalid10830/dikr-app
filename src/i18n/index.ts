@@ -1,0 +1,240 @@
+import type { Language } from '../types';
+
+export const dikrTemplates = {
+  fr: [
+    "Il n'y a de divinité digne d'être adorée qu'Allah, Seul, sans associé, à Lui la royauté et la louange, et Il est Omnipotent",
+    "SubhanAllah wa bihamdihi (Gloire et louange à Allah)",
+    "SubhanAllah, wa Alhamdulillah, wa La ilaha illAllah, wa Allahu Akbar",
+    "La hawla wa la quwwata illa billah",
+    "Astaghfirullah alladhi la ilaha illa Huwal-Hayyul-Qayyum wa atubu ilayh",
+    "Allahumma salli wa sallim 'ala Nabiyyina Muhammad",
+    "Astaghfirullah wa atubu ilayh"
+  ],
+  en: [
+    "There is no deity worthy of worship except Allah, Alone, with no partner, to Him belongs the dominion and praise, and He is Able to do all things",
+    "SubhanAllah wa bihamdihi (Glory and praise be to Allah)",
+    "SubhanAllah, wa Alhamdulillah, wa La ilaha illAllah, wa Allahu Akbar",
+    "La hawla wa la quwwata illa billah",
+    "Astaghfirullah alladhi la ilaha illa Huwal-Hayyul-Qayyum wa atubu ilayh",
+    "Allahumma salli wa sallim 'ala Nabiyyina Muhammad",
+    "Astaghfirullah wa atubu ilayh"
+  ],
+  ar: [
+    "لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير",
+    "سبحان الله وبحمده",
+    "سبحان الله، والحمد لله، ولا إله إلا الله، والله أكبر",
+    "لا حول ولا قوة إلا بالله",
+    "أستغفرُ اللهَ الذي لا إله إلا هو الحيَّ القيومَ وأتوبُ إليه",
+    "اللهم صلِّ وسلم على نبينا محمد",
+    "أستغفر الله وأتوب إليه"
+  ]
+};
+
+export const translations = {
+  fr: {
+    appTitle: "﴿ فَاذْكُرُونِي أَذْكُرْكُمْ ﴾",
+    viewHistory: "Voir l'historique global",
+    myDikrs: "Mes Dikrs",
+    addDikrPlaceholder: "Nom du Dikr (ex: Astaghfirullah)",
+    addBtn: "Ajouter",
+    calibrated: "Calibré",
+    calibrateBtn: "Calibrer",
+    recalibrateBtn: "Recalibrer",
+    freeMode: "Libre",
+    targetMode: "Objectif",
+    
+    // Calibration
+    calibrationTitle: "Calibration",
+    calibrationInstruct: "Appuyez sur {action}, récitez",
+    calibrationOnce: "une fois",
+    calibrationEnd: "votre Dikr à vitesse normale, puis appuyez sur",
+    saveRythm: "Enregistrer ce rythme",
+    
+    // Session
+    targetReached: "Objectif atteint !",
+    targetMsg: "Vous avez complété vos {targetCount} ({name}) en {time}s.",
+    saveAndQuit: "Enregistrer et Quitter",
+    objAbbr: "Obj",
+    sessionOngoing: "Session en cours...",
+    pressStopToSave: "Appuyez sur Stop (gauche) pour enregistrer, ou Play pour reprendre.",
+    replaceSessionPrompt: "Une session est déjà en cours ou en pause. Voulez-vous la remplacer ?",
+    sessionStart: "Début de la session",
+    sessionPause: "Pause",
+    sessionResume: "Reprise",
+    cancelSession: "Annuler",
+    cancelConfirm: "Êtes-vous sûr de vouloir annuler cette session ? Elle ne sera pas sauvegardée.",
+
+    // History & Stats
+    journalTitle: "Journal",
+    emptyJournal: "Aucune activité enregistrée...",
+    today: "Aujourd'hui",
+    thisWeek: "Cette Semaine",
+    total: "Total",
+    dikrs: "Dikrs",
+    clearHistoryPrompt: "Êtes-vous sûr de vouloir tout effacer ?",
+    exportData: "Exporter",
+    importData: "Importer",
+    importError: "Erreur lors de l'import, fichier invalide.",
+    targetPrompt: "Combien de répétitions souhaitez-vous faire ? (ex: 33, 100)",
+    targetsReached: "Objectifs atteints",
+    timeSpent: "Temps passé",
+    todayCountShort: "Aujourd'hui :",
+
+    // V4: Onboarding & Add Dikr
+    onboardingTitle: "Bienvenue sur Dikr App",
+    onboardingDesc: "Votre compagnon pour un rappel constant d'Allah.",
+    methodTitle: "Méthode Rythmique",
+    methodDesc: "Une expérience de dhikr apaisante basée sur le rythme et le temps.",
+    onboardingStep1Title: "1. Calibrez votre rythme",
+    onboardingStep1Desc: "Enregistrez le temps qu'il vous faut pour réciter un Dikr une seule fois à haute voix.",
+    onboardingStep2Title: "2. Choisissez votre mode",
+    onboardingStep2Desc: "Mode Libre (infini) ou Mode Objectif (nombre défini).",
+    onboardingStartBtn: "Commencer",
+    selectLanguage: "Choisissez votre langue",
+    addCustomDikr: "Ou créer un Dikr personnalisé...",
+    suggestedDikrs: "Dikrs Suggérés",
+    customDikrLabel: "Dikr personnalisé",
+    customDikrPlaceholder: "Tapez votre propre Dikr ici...",
+    cancelBtn: "Annuler",
+    journalDikrTitle: "Historique de {name}",
+    shareApp: "Partager l'application"
+  },
+  en: {
+    appTitle: "﴿ فَاذْكُرُونِي أَذْكُرْكُمْ ﴾",
+    viewHistory: "View History",
+    myDikrs: "My Dikrs",
+    addDikrPlaceholder: "Dikr Name (e.g., Astaghfirullah)",
+    addBtn: "Add",
+    calibrated: "Calibrated",
+    calibrateBtn: "Calibrate",
+    recalibrateBtn: "Recalibrate",
+    freeMode: "Free",
+    targetMode: "Target",
+
+    calibrationTitle: "Calibration",
+    calibrationInstruct: "Press {action}, recite",
+    calibrationOnce: "once",
+    calibrationEnd: "your Dikr at normal speed, then press",
+    saveRythm: "Save this rhythm",
+
+    targetReached: "Target reached!",
+    targetMsg: "You have completed your {targetCount} ({name}) in {time}s.",
+    saveAndQuit: "Save & Quit",
+    objAbbr: "Tgt",
+    sessionOngoing: "Session running...",
+    pressStopToSave: "Press Stop (left) to save it, or Play to resume.",
+    replaceSessionPrompt: "A session is already running or paused. Do you want to replace it?",
+    sessionStart: "Session started",
+    sessionPause: "Paused",
+    sessionResume: "Resumed",
+    cancelSession: "Cancel",
+    cancelConfirm: "Are you sure you want to cancel this session? It will not be saved.",
+
+    journalTitle: "Log",
+    emptyJournal: "No activity recorded...",
+    today: "Today",
+    thisWeek: "This Week",
+    total: "Total",
+    dikrs: "Dikrs",
+    clearHistoryPrompt: "Are you sure you want to clear the history?",
+    exportData: "Export",
+    importData: "Import",
+    importError: "Error importing, invalid file.",
+    targetPrompt: "How many repetitions do you want to do? (e.g., 33, 100)",
+    targetsReached: "Targets Reached",
+    timeSpent: "Time Spent",
+    todayCountShort: "Today:",
+
+    onboardingTitle: "Welcome to Dikr App",
+    onboardingDesc: "Your companion for constant remembrance of Allah.",
+    methodTitle: "Rhythmic Method",
+    methodDesc: "A soothing, time-based dhikr experience focused on rhythm.",
+    onboardingStep1Title: "1. Calibrate your rhythm",
+    onboardingStep1Desc: "Record the time it takes you to recite a Dikr aloud just once.",
+    onboardingStep2Title: "2. Choose your mode",
+    onboardingStep2Desc: "Free Mode (infinite) or Target Mode (defined number).",
+    onboardingStartBtn: "Get Started",
+    selectLanguage: "Choose your language",
+    addCustomDikr: "Or create a custom Dikr...",
+    suggestedDikrs: "Suggested Dikrs",
+    customDikrLabel: "Custom Dikr",
+    customDikrPlaceholder: "Type your own Dikr here...",
+    cancelBtn: "Cancel",
+    journalDikrTitle: "History of {name}",
+    shareApp: "Share App"
+  },
+  ar: {
+    appTitle: "﴿ فَاذْكُرُونِي أَذْكُرْكُمْ ﴾",
+    viewHistory: "عرض السجل",
+    myDikrs: "أذكاري",
+    addDikrPlaceholder: "اسم الذكر (مثل: أستغفر الله)",
+    addBtn: "إضافة",
+    calibrated: "تم الضبط",
+    calibrateBtn: "ضبط",
+    recalibrateBtn: "إعادة الضبط",
+    freeMode: "حر",
+    targetMode: "هدف",
+
+    calibrationTitle: "الضبط",
+    calibrationInstruct: "اضغط على {action}، اقرأ",
+    calibrationOnce: "مرة واحدة",
+    calibrationEnd: "ذكرك بالسرعة العادية، ثم اضغط على",
+    saveRythm: "حفظ هذا الإيقاع",
+
+    targetReached: "تم الوصول للهدف!",
+    targetMsg: "لقد أكملت {targetCount} ({name}) في {time} ثانية.",
+    saveAndQuit: "حفظ وخروج",
+    objAbbr: "الهدف",
+    sessionOngoing: "جلسة جارية...",
+    pressStopToSave: "اضغط إيقاف (يسار) للحفظ، أو تشغيل للمتابعة.",
+    replaceSessionPrompt: "هناك جلسة قيد التشغيل أو الإيقاف المؤقت. هل تريد استبدالها؟",
+    sessionStart: "بدء الجلسة",
+    sessionPause: "إيقاف مؤقت",
+    sessionResume: "استئناف",
+    cancelSession: "إلغاء",
+    cancelConfirm: "هل أنت متأكد من رغبتك في إلغاء هذه الجلسة؟ لن يتم حفظها.",
+
+    journalTitle: "السجل",
+    emptyJournal: "لا يوجد نشاط مسجل...",
+    today: "اليوم",
+    thisWeek: "هذا الأسبوع",
+    total: "المجموع",
+    dikrs: "مرات",
+    clearHistoryPrompt: "هل أنت متأكد أنك تريد مسح السجل بالكامل؟",
+    exportData: "تصدير",
+    importData: "استيراد",
+    importError: "خطأ في الاستيراد، ملف غير صالح.",
+    targetPrompt: "كم عدد التكرارات التي تريد القيام بها؟ (مثال: 33, 100)",
+    targetsReached: "الأهداف المنجزة",
+    timeSpent: "الوقت المقضي",
+    todayCountShort: "اليوم:",
+
+    onboardingTitle: "مرحباً بك في تطبيق الذكر",
+    onboardingDesc: "رفيقك لذكر الله الدائم.",
+    methodTitle: "الطريقة الإيقاعية",
+    methodDesc: "تجربة ذكر هادئة تعتمد على الوقت والإيقاع.",
+    onboardingStep1Title: "١. اضبط إيقاعك",
+    onboardingStep1Desc: "سجل الوقت الذي تحتاجه لقراءة الذكر مرة واحدة بصوت مسموع.",
+    onboardingStep2Title: "٢. اختر الوضع",
+    onboardingStep2Desc: "الوضع الحر (مفتوح) أو وضع الهدف (عدد محدد).",
+    onboardingStartBtn: "ابدأ الآن",
+    selectLanguage: "اختر لغتك",
+    addCustomDikr: "أو أضف ذكراً مخصصاً...",
+    suggestedDikrs: "أذكار مقترحة",
+    customDikrLabel: "ذكر مخصص",
+    customDikrPlaceholder: "اكتب ذكرك الخاص هنا...",
+    cancelBtn: "إلغاء",
+    journalDikrTitle: "سجل {name}",
+    shareApp: "مشاركة التطبيق"
+  }
+};
+
+export const t = (lang: Language, key: keyof typeof translations.fr, params?: Record<string, string | number>) => {
+  let text = translations[lang]?.[key] || translations['fr'][key];
+  if (params) {
+    Object.keys(params).forEach(p => {
+      text = text.replace(`{${p}}`, String(params[p]));
+    });
+  }
+  return text;
+};
