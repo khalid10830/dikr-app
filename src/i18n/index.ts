@@ -100,6 +100,7 @@ export const translations = {
     shareApp: "Partager l'application",
     installApp: "Installer l'App",
     installIOSInstruction: "Pour installer sur iOS : touchez l'icône Partager puis 'Sur l'écran d'accueil'.",
+    showTutorial: "Voir le tutoriel",
     onboardingPitch: "Que tu sois au volant, en train de marcher ou de faire tes courses, ne perds plus le fil de tes tasbihats de tête ou sur tes doigts.\nProfite d'un compagnon respectueux (sans pub, open source, offline) pour garder ton cœur et ton esprit connectés à Dieu, à chaque instant."
   },
   en: {
@@ -167,6 +168,7 @@ export const translations = {
     shareApp: "Share App",
     installApp: "Install App",
     installIOSInstruction: "To install on iOS: Tap the Share icon then 'Add to Home Screen'.",
+    showTutorial: "See tutorial",
     onboardingPitch: "Whether you're driving, walking, or running errands, never lose track of your tasbihat counting mentally or on your fingers again.\nEnjoy a mindful companion (ad-free, open source, offline) to keep your heart and mind connected to Allah, at every moment."
   },
   ar: {
@@ -234,6 +236,7 @@ export const translations = {
     shareApp: "مشاركة التطبيق",
     installApp: "تثبيت التطبيق",
     installIOSInstruction: "للتثبيت على iOS: اضغط على أيقونة المشاركة ثم 'إضافة إلى الشاشة الرئيسية'.",
+    showTutorial: "عرض الشرح",
     onboardingPitch: "سواء كنت تقود سيارتك، تمشي، أو تتسوق، لن تفقد بعد اليوم عد تسبيحاتك ذهنياً أو على أصابعك.\nاستمتع برفيق يحترم خصوصيتك (بدون إعلانات، مفتوح المصدر، يعمل بدون إنترنت) لتبقي قلبك وعقلك متصلين بالله في كل لحظة وفي كل مكان."
   }
 };

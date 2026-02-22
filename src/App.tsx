@@ -185,6 +185,10 @@ function App() {
             setHistoryFilterId(id);
             setCurrentScreen('history');
           }}
+          onShowOnboarding={() => {
+            setHasSeenOnboarding(false);
+            setCurrentScreen('onboarding');
+          }}
         />
       )}
 

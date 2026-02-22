@@ -15,9 +15,10 @@ interface Props {
   onStartSession: (dikrId: string, mode: SessionMode, target?: number) => void;
   onNavigate: (screen: Screen) => void;
   onViewHistory: (dikrId?: string) => void;
+  onShowOnboarding: () => void;
 }
 
-export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDeleteDikr, onEditDikr, onStartSession, onViewHistory }: Props) {
+export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDeleteDikr, onEditDikr, onStartSession, onViewHistory, onShowOnboarding }: Props) {
   const [isAdding, setIsAdding] = useState(false);
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [newName, setNewName] = useState('');
@@ -325,6 +326,13 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
             <input type="file" accept=".json" onChange={handleImport} className="hidden" />
           </label>
         </div>
+        
+        <button
+          onClick={onShowOnboarding}
+          className="text-slate-600 hover:text-slate-400 flex items-center gap-1.5 transition-colors mt-2"
+        >
+          <span className="text-xs">{t(lang, 'showTutorial')}</span>
+        </button>
         
         <a 
           href="https://github.com/khalid10830/dikr-app" 
