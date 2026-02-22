@@ -300,12 +300,11 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
           href="https://github.com/khalid10830/dikr-app" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="flex flex-col items-center gap-1.5 text-slate-500 hover:text-slate-400 transition-colors mt-6 pt-6 border-t border-slate-800/50 w-full max-w-[200px]"
+          className="flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-400 transition-colors mt-6 pt-5 border-t border-slate-800/50 w-full max-w-[250px]"
         >
-          <div className="flex items-center gap-1.5">
-            <Github size={16} />
-            <span className="text-sm">Open Source Project</span>
-          </div>
+          <Github size={14} />
+          <span className="text-xs font-medium">Open Source</span>
+          <span className="text-[10px] opacity-40 mx-1">•</span>
           <span className="text-[10px] opacity-70">© 2026</span>
         </a>
       </div>
