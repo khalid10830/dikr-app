@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Target, Infinity as InfinityIcon, Ruler, History, Plus, Trash2, Globe, Edit3, X, Download, Upload, Share2 } from 'lucide-react';
+import { Target, Infinity as InfinityIcon, Ruler, History, Plus, Trash2, Globe, Edit3, X, Download, Upload, Share2, Github } from 'lucide-react';
 import type { Screen, SessionMode, DikrItem, Language, DikrSession } from '../types';
 import { t, dikrTemplates } from '../i18n';
 import { getStatsByFilter, formatTime } from '../utils/stats';
@@ -128,7 +128,7 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
 
       <header className="mt-8 mb-8 text-center animate-in fade-in">
         <img src="/icon.png" alt="Dikr icon" className="w-20 h-20 mx-auto mb-4 rounded-full shadow-xl shadow-blue-900/20 border border-slate-700/50 object-cover" />
-        <h1 className="text-3xl font-bold tracking-tight text-white mb-6 animate-pulse-slow font-serif" dir="rtl">{t(lang, 'appTitle')}</h1>
+        <h1 className="text-4xl font-normal leading-relaxed text-blue-50 mb-6 font-quran drop-shadow-md" dir="rtl">{t(lang, 'appTitle')}</h1>
         
         <div 
           onClick={() => onViewHistory()}
@@ -295,6 +295,19 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
             <input type="file" accept=".json" onChange={handleImport} className="hidden" />
           </label>
         </div>
+        
+        <a 
+          href="https://github.com/khalid10830/dikr-app" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="flex flex-col items-center gap-1.5 text-slate-500 hover:text-slate-400 transition-colors mt-6 pt-6 border-t border-slate-800/50 w-full max-w-[200px]"
+        >
+          <div className="flex items-center gap-1.5">
+            <Github size={16} />
+            <span className="text-sm">Open Source Project</span>
+          </div>
+          <span className="text-[10px] opacity-70">© 2026</span>
+        </a>
       </div>
       
       {/* ADD DIKR OVERLAY MODAL */}

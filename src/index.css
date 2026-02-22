@@ -11,6 +11,10 @@ body {
   overscroll-behavior-y: contain;
 }
 
+.font-quran {
+  font-family: 'Amiri Quran', serif;
+}
+
 /* User select none for the main app to feel like native */
 #root {
   user-select: none;
