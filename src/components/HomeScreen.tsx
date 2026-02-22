@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Target, Infinity as InfinityIcon, Ruler, History, Plus, Trash2, Globe, Edit3, X, Download, Upload, Share2, Github } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Target, Infinity as InfinityIcon, Ruler, History, Plus, Trash2, Globe, Edit3, X, Download, Upload, Share2, Github, MonitorDown } from 'lucide-react';
 import type { Screen, SessionMode, DikrItem, Language, DikrSession } from '../types';
 import { t, dikrTemplates } from '../i18n';
 import { getStatsByFilter, formatTime } from '../utils/stats';
@@ -21,6 +21,28 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
   const [isAdding, setIsAdding] = useState(false);
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [newName, setNewName] = useState('');
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) {
+      alert(t(lang, 'installIOSInstruction'));
+      return;
+    }
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+    }
+  };
 
   const handleAddCustom = (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,7 +138,15 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
     <div className="flex flex-col w-full max-w-md p-6 min-h-screen relative">
       
       {/* Header & Lang Toggle (Fixed top right) */}
-      <div className="absolute top-6 right-6 z-10 animate-in fade-in">
+      <div className="absolute top-6 right-6 z-10 animate-in fade-in flex items-center gap-2">
+        <button
+          onClick={handleInstallClick}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-600/20 border border-blue-500/30 text-blue-300 hover:text-white hover:bg-blue-600 transition-colors text-xs font-semibold shadow-lg"
+          title={t(lang, 'installApp')}
+        >
+          <MonitorDown size={14} />
+          <span className="hidden sm:inline">{t(lang, 'installApp')}</span>
+        </button>
         <button 
           onClick={toggleLang}
           className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition-colors text-xs font-semibold uppercase shadow-lg"

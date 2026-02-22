@@ -97,7 +97,9 @@ export const translations = {
     customDikrPlaceholder: "Tapez votre propre Dikr ici...",
     cancelBtn: "Annuler",
     journalDikrTitle: "Historique de {name}",
-    shareApp: "Partager l'application"
+    shareApp: "Partager l'application",
+    installApp: "Installer l'App",
+    installIOSInstruction: "Pour installer sur iOS : touchez l'icône Partager puis 'Sur l'écran d'accueil'."
   },
   en: {
     appTitle: "﴿ فَاذْكُرُونِي أَذْكُرْكُمْ ﴾",
@@ -161,7 +163,9 @@ export const translations = {
     customDikrPlaceholder: "Type your own Dikr here...",
     cancelBtn: "Cancel",
     journalDikrTitle: "History of {name}",
-    shareApp: "Share App"
+    shareApp: "Share App",
+    installApp: "Install App",
+    installIOSInstruction: "To install on iOS: Tap the Share icon then 'Add to Home Screen'."
   },
   ar: {
     appTitle: "﴿ فَاذْكُرُونِي أَذْكُرْكُمْ ﴾",
@@ -225,7 +229,9 @@ export const translations = {
     customDikrPlaceholder: "اكتب ذكرك الخاص هنا...",
     cancelBtn: "إلغاء",
     journalDikrTitle: "سجل {name}",
-    shareApp: "مشاركة التطبيق"
+    shareApp: "مشاركة التطبيق",
+    installApp: "تثبيت التطبيق",
+    installIOSInstruction: "للتثبيت على iOS: اضغط على أيقونة المشاركة ثم 'إضافة إلى الشاشة الرئيسية'."
   }
 };
 
