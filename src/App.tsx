@@ -25,6 +25,7 @@ function App() {
 
   // --- NAVIGATION STATE ---
   const [currentScreen, setCurrentScreen] = useState<Screen>(hasSeenOnboarding ? 'home' : 'onboarding');
+  const [isOnboardingFromHome, setIsOnboardingFromHome] = useState(false);
   const [selectedDikrId, setSelectedDikrId] = useState<string | null>(null);
   const [sessionMode, setSessionMode] = useState<SessionMode>('free');
   const [targetCount, setTargetCount] = useState<number | undefined>(undefined);
@@ -71,6 +72,7 @@ function App() {
   // --- HANDLERS ---
   const handleCompleteOnboarding = () => {
     setHasSeenOnboarding(true);
+    setIsOnboardingFromHome(false);
     setCurrentScreen('home');
   };
 
@@ -167,6 +169,7 @@ function App() {
           lang={lang}
           onChangeLang={setLang}
           onFinish={handleCompleteOnboarding}
+          fromHomeScreen={isOnboardingFromHome}
         />
       )}
 
@@ -186,7 +189,7 @@ function App() {
             setCurrentScreen('history');
           }}
           onShowOnboarding={() => {
-            setHasSeenOnboarding(false);
+            setIsOnboardingFromHome(true);
             setCurrentScreen('onboarding');
           }}
         />

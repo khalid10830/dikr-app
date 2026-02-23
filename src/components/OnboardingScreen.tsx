@@ -6,9 +6,10 @@ interface Props {
   lang: Language;
   onChangeLang: (lang: Language) => void;
   onFinish: () => void;
+  fromHomeScreen?: boolean;
 }
 
-export function OnboardingScreen({ lang, onChangeLang, onFinish }: Props) {
+export function OnboardingScreen({ lang, onChangeLang, onFinish, fromHomeScreen = false }: Props) {
   return (
     <div className="flex flex-col items-center justify-between w-full min-h-screen max-w-md p-6 bg-slate-900 animate-in fade-in duration-500 overflow-y-auto">
       
@@ -87,7 +88,7 @@ export function OnboardingScreen({ lang, onChangeLang, onFinish }: Props) {
           onClick={onFinish}
           className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl shadow-[0_0_30px_rgba(37,99,235,0.3)] transition-all transform hover:scale-[1.02] active:scale-[0.98]"
         >
-          {t(lang, 'onboardingStartBtn')}
+          {fromHomeScreen ? t(lang, 'backBtn') : t(lang, 'onboardingStartBtn')}
         </button>
       </div>
 
