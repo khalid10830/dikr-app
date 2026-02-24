@@ -9,13 +9,14 @@ interface Props {
   elapsedTime: number;
   isRunning: boolean;
   onToggle: () => void;
+  onRestart: () => void;
   onBack: () => void;
   onSave: (durationMs: number) => void;
   onFinish: () => void;
   onReset: () => void;
 }
 
-export function CalibrationScreen({ lang, dikr, elapsedTime, isRunning, onToggle, onBack, onSave, onReset, onFinish }: Props) {
+export function CalibrationScreen({ lang, dikr, elapsedTime, isRunning, onToggle, onRestart, onBack, onSave, onReset, onFinish }: Props) {
   const [attempts, setAttempts] = useState<number[]>([]);
 
   const getAllAttempts = () => attempts.length > 0 ? attempts : (elapsedTime > 500 ? [elapsedTime] : []);
@@ -36,10 +37,7 @@ export function CalibrationScreen({ lang, dikr, elapsedTime, isRunning, onToggle
         }
         onToggle();
      } else if (!isRunning && elapsedTime > 0) {
-        onReset();
-        setTimeout(() => {
-           onToggle();
-        }, 10);
+        onRestart();
      } else {
         onToggle();
      }

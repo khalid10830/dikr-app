@@ -19,6 +19,37 @@ interface Props {
   onNavigateHome: () => void;
 }
 
+const playTargetReachedSound = () => {
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const ctx = new AudioContextClass();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    osc.type = 'sine';
+    const now = ctx.currentTime;
+    
+    osc.frequency.setValueAtTime(1046.50, now);
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.5, now + 0.05);
+    gain.gain.linearRampToValueAtTime(0, now + 0.15);
+    
+    osc.frequency.setValueAtTime(1318.51, now + 0.2);
+    gain.gain.setValueAtTime(0, now + 0.2);
+    gain.gain.linearRampToValueAtTime(0.5, now + 0.25);
+    gain.gain.linearRampToValueAtTime(0, now + 0.4);
+    
+    osc.start(now);
+    osc.stop(now + 0.5);
+  } catch (e) {
+    console.warn('Audio play failed', e);
+  }
+};
+
 export function SessionScreen({ 
   lang, dikr, mode, targetCount, elapsedTime, isRunning, sessionEvents, onToggle, onCancel, onFinish, onNavigateHome 
 }: Props) {
@@ -35,7 +66,9 @@ export function SessionScreen({
 
   const vibrate = (pattern: number | number[]) => {
     if (typeof window !== 'undefined' && navigator.vibrate) {
-      navigator.vibrate(pattern);
+      try {
+        navigator.vibrate(pattern);
+      } catch (e) {}
     }
   };
 
@@ -43,6 +76,7 @@ export function SessionScreen({
     if (mode === 'target' && targetCount && currentCount >= targetCount && isRunning) {
       onToggle(); 
       vibrate([200, 100, 200, 100, 500]); 
+      playTargetReachedSound();
       
       if ('Notification' in window && Notification.permission === 'granted') {
         const title = t(lang, 'targetReached');
@@ -57,10 +91,10 @@ export function SessionScreen({
           navigator.serviceWorker.ready.then(registration => {
             registration.showNotification(title, options);
           }).catch(() => {
-            new Notification(title, options);
+            try { new Notification(title, options); } catch (e) {}
           });
         } else {
-          new Notification(title, options);
+          try { new Notification(title, options); } catch (e) {}
         }
       }
     }

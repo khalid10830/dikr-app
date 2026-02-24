@@ -62,6 +62,13 @@ function App() {
     }
   };
 
+  const restartTimer = () => {
+    setStartTime(Date.now());
+    setElapsedTime(0);
+    setIsTimerRunning(true);
+    setSessionEvents([{ time: Date.now(), action: 'start' }]);
+  };
+
   const resetTimer = () => {
     setIsTimerRunning(false);
     setElapsedTime(0);
@@ -207,6 +214,7 @@ function App() {
           elapsedTime={elapsedTime}
           isRunning={isTimerRunning}
           onToggle={toggleTimer}
+          onRestart={restartTimer}
           onBack={() => setCurrentScreen('home')}
           onSave={handleSaveCalibration}
           onFinish={() => handleFinishSession(false)} 
