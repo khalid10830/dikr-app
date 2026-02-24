@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { ArrowLeft, Play, Square, Check, RotateCcw } from 'lucide-react';
 import type { DikrItem, Language } from '../types';
 import { t } from '../i18n';
@@ -15,12 +16,38 @@ interface Props {
 }
 
 export function CalibrationScreen({ lang, dikr, elapsedTime, isRunning, onToggle, onBack, onSave, onReset, onFinish }: Props) {
-  
+  const [attempts, setAttempts] = useState<number[]>([]);
+
+  const getAllAttempts = () => attempts.length > 0 ? attempts : (elapsedTime > 500 ? [elapsedTime] : []);
+  const allAttempts = getAllAttempts();
+  const avg = allAttempts.length > 0 ? allAttempts.reduce((a, b) => a + b, 0) / allAttempts.length : 0;
+
   const handleSave = () => {
-    if (elapsedTime > 500) {
-      onSave(elapsedTime);
-      onFinish();
-    }
+    if (allAttempts.length === 0) return;
+    onSave(avg);
+    onFinish();
+  };
+
+  const handleToggle = () => {
+     if (isRunning) {
+        // Stopping
+        if (elapsedTime > 500) {
+           setAttempts(prev => [...prev, elapsedTime]);
+        }
+        onToggle();
+     } else if (!isRunning && elapsedTime > 0) {
+        onReset();
+        setTimeout(() => {
+           onToggle();
+        }, 10);
+     } else {
+        onToggle();
+     }
+  };
+
+  const handleReset = () => {
+     setAttempts([]);
+     onReset();
   };
 
   return (
@@ -47,15 +74,16 @@ export function CalibrationScreen({ lang, dikr, elapsedTime, isRunning, onToggle
 
         <div className="flex items-center gap-6" dir="ltr">
           <button
-            onClick={onReset}
-            disabled={isRunning || elapsedTime === 0}
+            onClick={handleReset}
+            disabled={isRunning || (elapsedTime === 0 && attempts.length === 0)}
             className="flex items-center justify-center w-14 h-14 rounded-full bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors disabled:opacity-50"
+            title={elapsedTime === 0 && attempts.length > 0 ? t(lang, 'clearAttempts') as string : ''}
           >
             <RotateCcw size={20} />
           </button>
 
           <button
-            onClick={onToggle}
+            onClick={handleToggle}
             className={`relative flex items-center justify-center w-24 h-24 rounded-full shadow-2xl transition-all duration-300 ${
               isRunning 
                 ? 'bg-red-500/20 text-red-500 hover:bg-red-500/30 border-2 border-red-500' 
@@ -68,14 +96,25 @@ export function CalibrationScreen({ lang, dikr, elapsedTime, isRunning, onToggle
           <div className="w-14 h-14" />
         </div>
 
-        {!isRunning && elapsedTime > 0 && (
-          <div className="mt-16 w-full animate-in fade-in zoom-in duration-300">
+        {!isRunning && (attempts.length > 0 || elapsedTime > 0) && (
+          <div className="mt-12 w-full animate-in fade-in zoom-in duration-300 flex flex-col items-center">
+             {attempts.length > 0 && (
+                <div className="flex gap-2 mb-6 flex-wrap justify-center max-w-[250px]">
+                   {attempts.map((att, i) => (
+                      <span key={i} className="bg-slate-800 text-slate-300 text-sm px-3 py-1.5 rounded-lg border border-slate-700 shadow-sm" dir="ltr">
+                         {(att / 1000).toFixed(2)}s
+                      </span>
+                   ))}
+                </div>
+             )}
             <button
               onClick={handleSave}
-              className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white py-4 rounded-xl font-medium transition-colors"
+              className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white py-4 rounded-xl font-medium transition-colors shadow-lg shadow-emerald-900/20"
             >
               <Check size={20} />
-              {t(lang, 'saveRythm')}
+              {attempts.length > 1 
+                ? `${t(lang, 'saveAverage')} (${(avg / 1000).toFixed(2)}s)` 
+                : t(lang, 'saveRythm')}
             </button>
           </div>
         )}

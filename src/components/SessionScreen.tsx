@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Play, Pause, X as XIcon, CheckCircle2, Check } from 'lucide-react';
 import type { SessionMode, DikrItem, Language, SessionEvent } from '../types';
 import { t } from '../i18n';
@@ -22,6 +22,13 @@ interface Props {
 export function SessionScreen({ 
   lang, dikr, mode, targetCount, elapsedTime, isRunning, sessionEvents, onToggle, onCancel, onFinish, onNavigateHome 
 }: Props) {
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    type: 'confirm';
+    title: string;
+    message?: string;
+    onConfirm: () => void;
+  }>({ isOpen: false, type: 'confirm', title: '', onConfirm: () => {} });
 
   const durationMs = dikr.durationMs || 1000; 
   const currentCount = Math.floor(elapsedTime / durationMs);
@@ -36,8 +43,28 @@ export function SessionScreen({
     if (mode === 'target' && targetCount && currentCount >= targetCount && isRunning) {
       onToggle(); 
       vibrate([200, 100, 200, 100, 500]); 
+      
+      if ('Notification' in window && Notification.permission === 'granted') {
+        const title = t(lang, 'targetReached');
+        const options = {
+          body: t(lang, 'targetMsg', { targetCount: targetCount || 0, name: dikr.name, time: Math.floor(elapsedTime / 1000) }),
+          icon: '/icon-192x192.png',
+          badge: '/icon-192x192.png',
+          vibrate: [200, 100, 200, 100, 500],
+        };
+        
+        if (navigator.serviceWorker) {
+          navigator.serviceWorker.ready.then(registration => {
+            registration.showNotification(title, options);
+          }).catch(() => {
+            new Notification(title, options);
+          });
+        } else {
+          new Notification(title, options);
+        }
+      }
     }
-  }, [currentCount, targetCount, mode, isRunning, onToggle]);
+  }, [currentCount, targetCount, mode, isRunning, onToggle, lang, dikr.name, elapsedTime]);
 
   const lastVibratedCount = useRef(0);
   useEffect(() => {
@@ -126,9 +153,13 @@ export function SessionScreen({
               if (elapsedTime > 0 && !isRunning) {
                 onFinish();
               } else {
-                if (window.confirm(t(lang, 'cancelConfirm'))) {
-                  onCancel();
-                }
+                setModalConfig({
+                  isOpen: true,
+                  type: 'confirm',
+                  title: t(lang, 'cancelSession'),
+                  message: t(lang, 'cancelConfirm'),
+                  onConfirm: () => onCancel()
+                });
               }
             }}
             className={`flex flex-col items-center justify-center w-16 h-16 rounded-full transition-colors ${
@@ -173,6 +204,35 @@ export function SessionScreen({
       
       {isRunning && (
         <div className="fixed inset-0 pointer-events-none bg-black/40 mix-blend-multiply transition-opacity duration-1000" />
+      )}
+
+      {modalConfig.isOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" onClick={() => setModalConfig(prev => ({ ...prev, isOpen: false }))} />
+          <div className="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-2xl shadow-2xl z-10 flex flex-col animate-in zoom-in-95 duration-200 overflow-hidden" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+            <div className="p-6 flex flex-col gap-4 text-center">
+              <h3 className="text-xl font-semibold text-white">{modalConfig.title}</h3>
+              {modalConfig.message && <p className="text-slate-400 text-sm leading-relaxed">{modalConfig.message}</p>}
+            </div>
+            <div className="flex border-t border-slate-700">
+              <button 
+                onClick={() => setModalConfig(prev => ({ ...prev, isOpen: false }))} 
+                className={`flex-1 py-4 text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 transition-colors font-medium border-slate-700 ${lang === 'ar' ? 'border-l' : 'border-r'}`}
+              >
+                {t(lang, 'backBtn')}
+              </button>
+              <button 
+                onClick={() => {
+                  modalConfig.onConfirm();
+                  setModalConfig(prev => ({ ...prev, isOpen: false }));
+                }} 
+                className="flex-1 py-4 text-red-500 hover:text-red-400 hover:bg-slate-700/50 transition-colors font-medium focus:outline-none"
+              >
+                {t(lang, 'cancelSession')}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

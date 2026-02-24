@@ -134,12 +134,17 @@ function App() {
     setCurrentScreen('home');
   };
 
+  const [sessionConfirm, setSessionConfirm] = useState<{ dikrId: string; mode: SessionMode; target?: number } | null>(null);
+
   const startSession = (dikrId: string, mode: SessionMode, target?: number) => {
     if (isTimerRunning || elapsedTime > 0) {
-      if (!window.confirm(t(lang, 'replaceSessionPrompt'))) {
-        return;
-      }
+      setSessionConfirm({ dikrId, mode, target });
+      return;
     }
+    executeStartSession(dikrId, mode, target);
+  };
+
+  const executeStartSession = (dikrId: string, mode: SessionMode, target?: number) => {
     resetTimer();
     setSelectedDikrId(dikrId);
     setSessionMode(mode);
@@ -236,14 +241,10 @@ function App() {
           filterDikrName={historyFilterId ? dikrs.find(d => d.id === historyFilterId)?.name : undefined}
           onBack={() => setCurrentScreen('home')}
           onClear={() => {
-            if (window.confirm(t(lang, 'clearHistoryPrompt'))) {
-              setHistory(historyFilterId ? history.filter(h => h.dikrId !== historyFilterId) : []);
-            }
+            setHistory(historyFilterId ? history.filter(h => h.dikrId !== historyFilterId) : []);
           }}
           onDeleteSession={(sid) => {
-            if (window.confirm("Delete ?")) {
-              setHistory(history.filter(s => s.id !== sid));
-            }
+            setHistory(history.filter(s => s.id !== sid));
           }}
           onEditDikr={(id, newName) => handleEditDikr(id, newName)}
           onDeleteDikr={(id) => {
@@ -251,6 +252,36 @@ function App() {
             setCurrentScreen('home');
           }}
         />
+      )}
+
+      {/* Custom Global Modal for Session Replacement */}
+      {sessionConfirm && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" onClick={() => setSessionConfirm(null)} />
+          <div className="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-2xl shadow-2xl z-10 flex flex-col animate-in zoom-in-95 duration-200 overflow-hidden" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+            <div className="p-6 flex flex-col gap-4 text-center">
+              <h3 className="text-xl font-semibold text-white">{t(lang, 'sessionOngoing')}</h3>
+              <p className="text-slate-400 text-sm leading-relaxed">{t(lang, 'replaceSessionPrompt')}</p>
+            </div>
+            <div className="flex border-t border-slate-700">
+              <button 
+                onClick={() => setSessionConfirm(null)} 
+                className={`flex-1 py-4 text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 transition-colors font-medium border-slate-700 ${lang === 'ar' ? 'border-l' : 'border-r'}`}
+              >
+                {t(lang, 'cancelBtn')}
+              </button>
+              <button 
+                onClick={() => {
+                  executeStartSession(sessionConfirm.dikrId, sessionConfirm.mode, sessionConfirm.target);
+                  setSessionConfirm(null);
+                }} 
+                className="flex-1 py-4 text-emerald-400 hover:text-emerald-300 hover:bg-slate-700/50 transition-colors font-medium focus:outline-none"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

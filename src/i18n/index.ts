@@ -49,6 +49,9 @@ export const translations = {
     calibrationOnce: "une fois",
     calibrationEnd: "votre Dikr à vitesse normale, puis appuyez sur",
     saveRythm: "Enregistrer ce rythme",
+    saveAverage: "Sauvegarder la moyenne",
+    estimatedTime: "Temps estimé :",
+    clearAttempts: "Effacer les essais",
     
     // Session
     targetReached: "Objectif atteint !",
@@ -114,7 +117,13 @@ export const translations = {
     updateAvailable: "Une mise à jour est disponible !",
     updateNow: "Mettre à jour maintenant",
     upToDate: "L'application est à jour.",
-    close: "Fermer"
+    close: "Fermer",
+    editDikrName: "Renommer le Dikr",
+    delete: "Supprimer",
+    confirmDeleteDikr: "Voulez-vous vraiment supprimer cet élément ?",
+    clearHistoryLabel: "Vider l'historique",
+    confirmDeleteSession: "Voulez-vous supprimer cette session ?",
+    saveBtn: "Enregistrer"
   },
   en: {
     appTitle: "﴿ فَاذْكُرُونِي أَذْكُرْكُمْ ﴾",
@@ -133,6 +142,9 @@ export const translations = {
     calibrationOnce: "once",
     calibrationEnd: "your Dikr at normal speed, then press",
     saveRythm: "Save this rhythm",
+    saveAverage: "Save average",
+    estimatedTime: "Estimated time:",
+    clearAttempts: "Clear attempts",
 
     targetReached: "Target reached!",
     targetMsg: "You have completed your {targetCount} ({name}) in {time}s.",
@@ -194,8 +206,14 @@ export const translations = {
     checkUpdate: "Check for updates",
     updateAvailable: "An update is available!",
     updateNow: "Update now",
-    upToDate: "The application is up to date.",
-    close: "Close"
+    upToDate: "App is up to date.",
+    close: "Close",
+    editDikrName: "Rename Dikr",
+    delete: "Delete",
+    confirmDeleteDikr: "Are you sure you want to delete this?",
+    clearHistoryLabel: "Clear history",
+    confirmDeleteSession: "Are you sure you want to delete this session?",
+    saveBtn: "Save"
   },
   ar: {
     appTitle: "﴿ فَاذْكُرُونِي أَذْكُرْكُمْ ﴾",
@@ -214,6 +232,9 @@ export const translations = {
     calibrationOnce: "مرة واحدة",
     calibrationEnd: "ذكرك بالسرعة العادية، ثم اضغط على",
     saveRythm: "حفظ هذا الإيقاع",
+    saveAverage: "حفظ المتوسط",
+    estimatedTime: "الوقت المقدر:",
+    clearAttempts: "مسح المحاولات",
 
     targetReached: "تم الوصول للهدف!",
     targetMsg: "لقد أكملت {targetCount} ({name}) في {time} ثانية.",
@@ -275,8 +296,14 @@ export const translations = {
     checkUpdate: "التحقق من التحديثات",
     updateAvailable: "يوجد تحديث جديد!",
     updateNow: "تحديث الآن",
-    upToDate: "التطبيق محدث لأحدث إصدار.",
-    close: "إغلاق"
+    upToDate: "التطبيق محدث.",
+    close: "إغلاق",
+    editDikrName: "إعادة تسمية الذكر",
+    delete: "حذف",
+    confirmDeleteDikr: "هل أنت متأكد أنك تريد حذف هذا؟",
+    clearHistoryLabel: "مسح السجل",
+    confirmDeleteSession: "هل أنت متأكد أنك تريد حذف هذه الجلسة؟",
+    saveBtn: "حفظ"
   }
 };
 

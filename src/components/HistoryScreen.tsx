@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { ArrowLeft, Trash2, History, Target, Edit3 } from 'lucide-react';
 import type { DikrSession, Language } from '../types';
 import { t } from '../i18n';
@@ -16,7 +17,15 @@ interface Props {
 }
 
 export function HistoryScreen({ lang, history, filterDikrId, filterDikrName, onBack, onClear, onDeleteSession, onEditDikr, onDeleteDikr }: Props) {
-  
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    type: 'prompt' | 'confirm';
+    title: string;
+    message?: string;
+    onConfirm: (val?: string) => void;
+  }>({ isOpen: false, type: 'confirm', title: '', onConfirm: () => {} });
+  const [modalInput, setModalInput] = useState('');
+
   const displayHistory = filterDikrId 
     ? history.filter(s => s.dikrId === filterDikrId)
     : history;
@@ -63,8 +72,15 @@ export function HistoryScreen({ lang, history, filterDikrId, filterDikrName, onB
           <div className="flex items-center gap-1">
             <button 
               onClick={() => {
-                const newName = window.prompt("Nouveau nom / New name:", filterDikrName);
-                if (newName && newName.trim()) onEditDikr(filterDikrId, newName.trim());
+                setModalInput(filterDikrName || '');
+                setModalConfig({
+                  isOpen: true,
+                  type: 'prompt',
+                  title: t(lang, 'editDikrName') || "Renommer / Rename",
+                  onConfirm: (val) => {
+                    if (val && val.trim()) onEditDikr(filterDikrId, val.trim());
+                  }
+                });
               }}
               className="p-2 text-emerald-500 hover:text-emerald-400 transition-colors"
             >
@@ -72,7 +88,13 @@ export function HistoryScreen({ lang, history, filterDikrId, filterDikrName, onB
             </button>
             <button 
               onClick={() => {
-                if(window.confirm("Delete ?")) onDeleteDikr(filterDikrId);
+                setModalConfig({
+                  isOpen: true,
+                  type: 'confirm',
+                  title: t(lang, 'delete') || "Supprimer",
+                  message: t(lang, 'confirmDeleteDikr') || "Voulez-vous vraiment supprimer cet élément ?",
+                  onConfirm: () => onDeleteDikr(filterDikrId)
+                });
               }}
               className={`p-2 ${lang === 'ar' ? '-ml-2' : '-mr-2'} text-red-500 hover:text-red-400 transition-colors`}
             >
@@ -80,7 +102,18 @@ export function HistoryScreen({ lang, history, filterDikrId, filterDikrName, onB
             </button>
           </div>
         ) : displayHistory.length > 0 ? (
-          <button onClick={onClear} className={`p-2 ${lang === 'ar' ? '-ml-2' : '-mr-2'} text-red-500 hover:text-red-400 transition-colors`}>
+          <button 
+            onClick={() => {
+              setModalConfig({
+                isOpen: true,
+                type: 'confirm',
+                title: t(lang, 'clearHistoryLabel') || 'Vider l\'historique',
+                message: t(lang, 'clearHistoryPrompt'),
+                onConfirm: () => onClear()
+              });
+            }}
+            className={`p-2 ${lang === 'ar' ? '-ml-2' : '-mr-2'} text-red-500 hover:text-red-400 transition-colors`}
+          >
             <Trash2 size={20} />
           </button>
         ) : <div className="w-10" />}
@@ -135,9 +168,17 @@ export function HistoryScreen({ lang, history, filterDikrId, filterDikrName, onB
                   <div className="flex items-center gap-3">
                     <span className="text-xs text-slate-400 whitespace-nowrap">{formatDate(session.date)}</span>
                     <button 
-                      onClick={() => onDeleteSession(session.id)}
-                      className="text-slate-500 hover:text-red-400 transition-colors"
-                      title="Supprimer"
+                      onClick={() => {
+                        setModalConfig({
+                          isOpen: true,
+                          type: 'confirm',
+                          title: t(lang, 'delete') || 'Supprimer',
+                          message: t(lang, 'confirmDeleteSession') || "Voulez-vous supprimer cette session ?",
+                          onConfirm: () => onDeleteSession(session.id)
+                        });
+                      }}
+                      className="text-slate-500 hover:text-red-400 transition-colors p-2 -m-2"
+                      title={t(lang, 'delete') || 'Supprimer'}
                     >
                       <Trash2 size={16} />
                     </button>
@@ -160,6 +201,50 @@ export function HistoryScreen({ lang, history, filterDikrId, filterDikrName, onB
             </li>
           ))}
         </ul>
+      )}
+
+      {/* Custom Global Modals (Prompt / Confirm) */}
+      {modalConfig.isOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" onClick={() => setModalConfig(prev => ({ ...prev, isOpen: false }))} />
+          <div className="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-2xl shadow-2xl z-10 flex flex-col animate-in zoom-in-95 duration-200 overflow-hidden" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+            <div className="p-6 flex flex-col gap-4 text-center">
+              <h3 className="text-xl font-semibold text-white">{modalConfig.title}</h3>
+              {modalConfig.message && <p className="text-slate-400 text-sm leading-relaxed">{modalConfig.message}</p>}
+              
+              {modalConfig.type === 'prompt' && (
+                <input 
+                  type="text"
+                  autoFocus
+                  value={modalInput}
+                  onChange={(e) => setModalInput(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-center mt-2"
+                />
+              )}
+            </div>
+            <div className="flex border-t border-slate-700">
+              <button 
+                onClick={() => setModalConfig(prev => ({ ...prev, isOpen: false }))} 
+                className={`flex-1 py-4 text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 transition-colors font-medium border-slate-700 ${lang === 'ar' ? 'border-l' : 'border-r'}`}
+              >
+                {t(lang, 'cancelBtn')}
+              </button>
+              <button 
+                onClick={() => {
+                  modalConfig.onConfirm(modalInput);
+                  setModalConfig(prev => ({ ...prev, isOpen: false }));
+                }} 
+                className={`flex-1 py-4 font-medium focus:outline-none transition-colors ${
+                  modalConfig.type === 'confirm' 
+                    ? 'text-red-500 hover:text-red-400 hover:bg-slate-700/50' 
+                    : 'text-blue-400 hover:text-blue-300 hover:bg-slate-700/50'
+                }`}
+              >
+                {modalConfig.type === 'confirm' ? (t(lang, 'delete') || 'Supprimer') : (t(lang, 'saveBtn') || 'Enregistrer')}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

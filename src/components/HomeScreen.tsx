@@ -24,7 +24,7 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
   const [isAdding, setIsAdding] = useState(false);
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [newName, setNewName] = useState('');
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { isStandalone } = usePWA();
   
@@ -33,6 +33,7 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
     type: 'prompt' | 'confirm';
     title: string;
     message?: string;
+    estimatedTimeMs?: number;
     onConfirm: (val?: string) => void;
   }>({ isOpen: false, type: 'confirm', title: '', onConfirm: () => {} });
   const [modalInput, setModalInput] = useState('');
@@ -51,8 +52,9 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
       alert(t(lang, 'installIOSInstruction'));
       return;
     }
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
+    const promptEvent = deferredPrompt as Event & { prompt: () => void, userChoice: Promise<{outcome: string}> };
+    promptEvent.prompt();
+    const { outcome } = await promptEvent.userChoice;
     if (outcome === 'accepted') {
       setDeferredPrompt(null);
     }
@@ -74,12 +76,19 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
   };
 
   const handlePromptTarget = (dikrId: string) => {
+    const dikr = dikrs.find(d => d.id === dikrId);
+    
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+    
     setModalInput("100");
     setModalConfig({
       isOpen: true,
       type: 'prompt',
       title: t(lang, 'targetMode'),
       message: t(lang, 'targetPrompt'),
+      estimatedTimeMs: dikr?.durationMs || undefined,
       onConfirm: (val) => {
         const num = parseInt(val || '', 10);
         if (!isNaN(num) && num > 0) {
@@ -127,7 +136,7 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
         } else {
           alert(t(lang, 'importError'));
         }
-      } catch (err) {
+      } catch {
         alert(t(lang, 'importError'));
       }
     };
@@ -352,12 +361,12 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
       <div className="mt-8 flex flex-col items-center justify-center gap-6 text-sm pb-16">
         <div className="flex flex-wrap items-center justify-center gap-3">
           <button onClick={handleShare} className="text-slate-300 bg-slate-800 hover:bg-slate-700 rounded-full px-5 py-2.5 transition-colors flex items-center gap-2 font-medium border border-slate-700">
-             <Share2 size={16} /> {t(lang, 'shareAppShort' as any)}
+             <Share2 size={16} /> {t(lang, 'shareAppShort' as Parameters<typeof t>[1])}
           </button>
           
           {!isStandalone && (
             <button onClick={handleInstallClick} className="text-white bg-blue-600 hover:bg-blue-500 rounded-full px-5 py-2.5 transition-colors flex items-center gap-2 font-medium shadow-lg shadow-blue-900/20">
-               <Download size={16} /> {t(lang, 'installAppShort' as any)}
+               <Download size={16} /> {t(lang, 'installAppShort' as Parameters<typeof t>[1])}
             </button>
           )}
         </div>
@@ -384,7 +393,7 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
           const input = document.createElement('input');
           input.type = 'file';
           input.accept = '.json';
-          input.onchange = handleImport as any;
+          input.onchange = handleImport as unknown as (this: GlobalEventHandlers, ev: Event) => void;
           input.click();
         }}
         onExport={handleExport}
@@ -456,13 +465,21 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
               {modalConfig.message && <p className="text-slate-400 text-sm">{modalConfig.message}</p>}
               
               {modalConfig.type === 'prompt' && (
-                <input 
-                  type="text"
-                  autoFocus
-                  value={modalInput}
-                  onChange={(e) => setModalInput(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-center mt-2"
-                />
+                <div className="flex flex-col gap-2 w-full mt-2">
+                  <input 
+                    type="text"
+                    autoFocus
+                    value={modalInput}
+                    onChange={(e) => setModalInput(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-center"
+                  />
+                  {modalConfig.estimatedTimeMs && parseInt(modalInput, 10) > 0 && (
+                    <div className="text-xs font-medium text-slate-400 flex items-center justify-center gap-1.5 bg-slate-900/50 py-2 rounded-lg border border-slate-800">
+                      <span>{t(lang, 'estimatedTime')}</span>
+                      <span className="text-emerald-400" dir="ltr">{formatTime(modalConfig.estimatedTimeMs * parseInt(modalInput, 10), lang)}</span>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
             <div className="flex border-t border-slate-700">

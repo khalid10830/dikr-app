@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 
 export function usePWA() {
-  const [isStandalone, setIsStandalone] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    const mediaQuery = window.matchMedia('(display-mode: standalone)');
+    const nav = window.navigator as Navigator & { standalone?: boolean };
+    return mediaQuery.matches || nav.standalone === true;
+  });
 
   useEffect(() => {
     // Vérifier si l'app est lancée en mode standalone (PWA installée)
     const mediaQuery = window.matchMedia('(display-mode: standalone)');
-    
-    // Définir l'état initial
-    setIsStandalone(mediaQuery.matches || (window.navigator as any).standalone === true);
 
     // Écouter les changements (si l'utilisateur installe l'app pendant qu'il l'utilise)
     const handleChange = (e: MediaQueryListEvent) => {
