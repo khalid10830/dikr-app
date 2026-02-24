@@ -3,7 +3,7 @@ import type { Language } from '../types';
 export const dikrTemplates = {
   fr: [
     "Il n'y a de divinité digne d'être adorée qu'Allah, Seul, sans associé, à Lui la royauté et la louange, et Il est Omnipotent",
-    "SubhanAllah wa bihamdihi (Gloire et louange à Allah)",
+    "SubhanAllah wa bihamdihi, SubhanAllah al-'Adhim (Gloire et louange à Allah, et gloire à Allah l'Immense)",
     "SubhanAllah, wa Alhamdulillah, wa La ilaha illAllah, wa Allahu Akbar",
     "La hawla wa la quwwata illa billah",
     "Astaghfirullah alladhi la ilaha illa Huwal-Hayyul-Qayyum wa atubu ilayh",
@@ -12,7 +12,7 @@ export const dikrTemplates = {
   ],
   en: [
     "There is no deity worthy of worship except Allah, Alone, with no partner, to Him belongs the dominion and praise, and He is Able to do all things",
-    "SubhanAllah wa bihamdihi (Glory and praise be to Allah)",
+    "SubhanAllah wa bihamdihi, SubhanAllah al-Adheem (Glory and praise be to Allah, and glory be to Allah the Supreme)",
     "SubhanAllah, wa Alhamdulillah, wa La ilaha illAllah, wa Allahu Akbar",
     "La hawla wa la quwwata illa billah",
     "Astaghfirullah alladhi la ilaha illa Huwal-Hayyul-Qayyum wa atubu ilayh",
@@ -21,7 +21,7 @@ export const dikrTemplates = {
   ],
   ar: [
     "لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير",
-    "سبحان الله وبحمده",
+    "سبحان الله وبحمده، سبحان الله العظيم",
     "سبحان الله، والحمد لله، ولا إله إلا الله، والله أكبر",
     "لا حول ولا قوة إلا بالله",
     "أستغفرُ اللهَ الذي لا إله إلا هو الحيَّ القيومَ وأتوبُ إليه",
