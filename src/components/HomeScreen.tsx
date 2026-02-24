@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Target, Infinity as InfinityIcon, Ruler, History, Plus, Trash2, Globe, Edit3, X, Download, Upload, Share2, Github, MonitorDown } from 'lucide-react';
+import { Target, Infinity as InfinityIcon, Ruler, History, Plus, Trash2, Globe, Edit3, X, Download, Share2, Github, Settings as SettingsIcon } from 'lucide-react';
 import type { Screen, SessionMode, DikrItem, Language, DikrSession } from '../types';
 import { t, dikrTemplates } from '../i18n';
 import { getStatsByFilter, formatTime } from '../utils/stats';
+import { SettingsModal } from './SettingsModal';
+import { usePWA } from '../hooks/usePWA';
 
 interface Props {
   lang: Language;
@@ -23,6 +25,17 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [newName, setNewName] = useState('');
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const { isStandalone } = usePWA();
+  
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    type: 'prompt' | 'confirm';
+    title: string;
+    message?: string;
+    onConfirm: (val?: string) => void;
+  }>({ isOpen: false, type: 'confirm', title: '', onConfirm: () => {} });
+  const [modalInput, setModalInput] = useState('');
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -61,11 +74,19 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
   };
 
   const handlePromptTarget = (dikrId: string) => {
-    const target = window.prompt(t(lang, 'targetPrompt'), "100");
-    const num = parseInt(target || '', 10);
-    if (!isNaN(num) && num > 0) {
-      onStartSession(dikrId, 'target', num);
-    }
+    setModalInput("100");
+    setModalConfig({
+      isOpen: true,
+      type: 'prompt',
+      title: t(lang, 'targetMode'),
+      message: t(lang, 'targetPrompt'),
+      onConfirm: (val) => {
+        const num = parseInt(val || '', 10);
+        if (!isNaN(num) && num > 0) {
+          onStartSession(dikrId, 'target', num);
+        }
+      }
+    });
   };
 
   const toggleLang = () => {
@@ -138,16 +159,18 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
   return (
     <div className="flex flex-col w-full max-w-md p-6 min-h-screen relative">
       
-      {/* Header & Lang Toggle (Fixed top right) */}
-      <div className="absolute top-6 right-6 z-10 animate-in fade-in flex items-center gap-2">
-        <button
-          onClick={handleInstallClick}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-600/20 border border-blue-500/30 text-blue-300 hover:text-white hover:bg-blue-600 transition-colors text-xs font-semibold shadow-lg"
-          title={t(lang, 'installApp')}
+      {/* Header Controls (Fixed top) */}
+      <div className="absolute top-6 left-6 z-10 animate-in fade-in">
+        <button 
+          onClick={() => setIsSettingsOpen(true)}
+          className="p-2 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700/80 transition-colors shadow-lg"
+          title={t(lang, 'settingsTitle')}
         >
-          <MonitorDown size={14} />
-          <span className="hidden sm:inline">{t(lang, 'installApp')}</span>
+          <SettingsIcon size={20} />
         </button>
+      </div>
+
+      <div className="absolute top-6 right-6 z-10 animate-in fade-in flex items-center gap-2">
         <button 
           onClick={toggleLang}
           className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition-colors text-xs font-semibold uppercase shadow-lg"
@@ -254,8 +277,15 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
                 </button>
                 <button 
                   onClick={() => {
-                    const newName = window.prompt("Nouveau nom / New name:", dikr.name);
-                    if (newName && newName.trim()) onEditDikr(dikr.id, newName.trim());
+                    setModalInput(dikr.name);
+                    setModalConfig({
+                      isOpen: true,
+                      type: 'prompt',
+                      title: "Renommer",
+                      onConfirm: (val) => {
+                        if (val && val.trim()) onEditDikr(dikr.id, val.trim());
+                      }
+                    });
                   }}
                   className="text-slate-500 hover:text-emerald-400 transition-colors p-1.5"
                   title="Renommer"
@@ -264,7 +294,13 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
                 </button>
                 <button 
                   onClick={() => {
-                    if(window.confirm("Delete ?")) onDeleteDikr(dikr.id);
+                    setModalConfig({
+                      isOpen: true,
+                      type: 'confirm',
+                      title: "Supprimer",
+                      message: "Voulez-vous vraiment supprimer ce dikr ?",
+                      onConfirm: () => onDeleteDikr(dikr.id)
+                    });
                   }}
                   className="text-slate-500 hover:text-red-400 transition-colors p-1.5"
                   title="Supprimer"
@@ -312,33 +348,25 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
         ))}
       </ul>
 
-      {/* Share / Import / Export */}
-      <div className="mt-8 flex flex-col items-center justify-center gap-4 text-xs pb-16">
-        <button onClick={handleShare} className="text-white bg-blue-600 hover:bg-blue-500 rounded-full px-6 py-2.5 transition-colors flex items-center gap-2 font-medium shadow-lg shadow-blue-900/20">
-           <Share2 size={16} /> {t(lang, 'shareApp')}
-        </button>
-        <div className="flex justify-center gap-6 mt-2">
-          <button onClick={handleExport} className="text-slate-500 hover:text-blue-400 flex items-center gap-1.5 transition-colors">
-            <Download size={14} /> {t(lang, 'exportData')}
+      {/* Footer Actions */}
+      <div className="mt-8 flex flex-col items-center justify-center gap-6 text-sm pb-16">
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <button onClick={handleShare} className="text-slate-300 bg-slate-800 hover:bg-slate-700 rounded-full px-5 py-2.5 transition-colors flex items-center gap-2 font-medium border border-slate-700">
+             <Share2 size={16} /> {t(lang, 'shareAppShort' as any)}
           </button>
-          <label className="text-slate-500 hover:text-blue-400 flex items-center gap-1.5 cursor-pointer transition-colors">
-            <Upload size={14} /> {t(lang, 'importData')}
-            <input type="file" accept=".json" onChange={handleImport} className="hidden" />
-          </label>
+          
+          {!isStandalone && (
+            <button onClick={handleInstallClick} className="text-white bg-blue-600 hover:bg-blue-500 rounded-full px-5 py-2.5 transition-colors flex items-center gap-2 font-medium shadow-lg shadow-blue-900/20">
+               <Download size={16} /> {t(lang, 'installAppShort' as any)}
+            </button>
+          )}
         </div>
-        
-        <button
-          onClick={onShowOnboarding}
-          className="text-slate-600 hover:text-slate-400 flex items-center gap-1.5 transition-colors mt-2"
-        >
-          <span className="text-xs">{t(lang, 'showTutorial')}</span>
-        </button>
         
         <a 
           href="https://github.com/khalid10830/dikr-app" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-400 transition-colors mt-6 pt-5 border-t border-slate-800/50 w-full max-w-[250px]"
+          className="flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-400 transition-colors pt-5 border-t border-slate-800/50 w-full max-w-[250px]"
         >
           <Github size={14} />
           <span className="text-xs font-medium">Open Source</span>
@@ -346,6 +374,22 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
           <span className="text-[10px] opacity-70">© 2026</span>
         </a>
       </div>
+      
+      <SettingsModal 
+        lang={lang}
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        onImport={() => {
+          // Trigger file input click programmatically since we removed it from DOM
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.accept = '.json';
+          input.onchange = handleImport as any;
+          input.click();
+        }}
+        onExport={handleExport}
+        onShowTutorial={onShowOnboarding}
+      />
       
       {/* ADD DIKR OVERLAY MODAL */}
       {isAdding && (
@@ -397,6 +441,47 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Global Modals (Prompt / Confirm) */}
+      {modalConfig.isOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" onClick={() => setModalConfig(prev => ({ ...prev, isOpen: false }))} />
+          <div className="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-2xl shadow-2xl z-10 flex flex-col animate-in zoom-in-95 duration-200 overflow-hidden" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+            <div className="p-6 flex flex-col gap-4 text-center">
+              <h3 className="text-xl font-semibold text-white">{modalConfig.title}</h3>
+              {modalConfig.message && <p className="text-slate-400 text-sm">{modalConfig.message}</p>}
+              
+              {modalConfig.type === 'prompt' && (
+                <input 
+                  type="text"
+                  autoFocus
+                  value={modalInput}
+                  onChange={(e) => setModalInput(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-center mt-2"
+                />
+              )}
+            </div>
+            <div className="flex border-t border-slate-700">
+              <button 
+                onClick={() => setModalConfig(prev => ({ ...prev, isOpen: false }))} 
+                className={`flex-1 py-4 text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 transition-colors font-medium border-slate-700 ${lang === 'ar' ? 'border-l' : 'border-r'}`}
+              >
+                {t(lang, 'cancelBtn')}
+              </button>
+              <button 
+                onClick={() => {
+                  modalConfig.onConfirm(modalInput);
+                  setModalConfig(prev => ({ ...prev, isOpen: false }));
+                }} 
+                className="flex-1 py-4 text-blue-400 hover:text-blue-300 hover:bg-slate-700/50 transition-colors font-medium focus:outline-none"
+              >
+                {/* On utilise un texte générique comme Valider ou Confirmer */}
+                {modalConfig.type === 'confirm' ? 'OK' : t(lang, 'addBtn')}
+              </button>
             </div>
           </div>
         </div>
