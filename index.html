@@ -2,13 +2,52 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    
+    <!-- SEO de base -->
+    <title>Dikr - Compteur intelligent et respectueux</title>
+    <meta name="description" content="Une application de Dikr sans publicité, respectueuse de vos données, intégrant la méthode de comptage au temps (Méthode rythmique)." />
+    <meta name="keywords" content="dikr, tasbih, islam, prière, rappel, sans pub, gratuit, méthode rythmique, compteur" />
+    <meta name="author" content="Dikr App" />
+    
+    <!-- Icônes -->
     <link rel="icon" type="image/png" href="/icon.png" />
     <link rel="apple-touch-icon" href="/icon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Dikr App</title>
+    
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Dikr - Le compteur intelligent et 100% sans pub" />
+    <meta property="og:description" content="Découvrez une nouvelle façon de faire le Dhikr avec la méthode rythmique. Application gratuite, respecte votre vie privée." />
+    <meta property="og:url" content="https://dikr.app/" />
+    <meta property="og:image" content="https://dikr.app/pwa-512x512.png" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Dikr - Compteur respectueux" />
+    <meta name="twitter:description" content="Une application de Dikr sans publicité, respectueuse de vos données." />
+    <meta name="twitter:image" content="/pwa-512x512.png" />
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Dikr App",
+      "url": "https://dikr.app/",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0"
+      },
+      "description": "Application gratuite de comptage de Dikr et Tasbih, sans publicité, avec la méthode innovante de calibration rythmique."
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -16,7 +16,7 @@ export default defineConfig({
       manifest: {
         name: 'Dikr App',
         short_name: 'Dikr',
-        description: 'Application de comptage de Dikr par temps (Méthode BENS)',
+        description: 'Application de comptage de Dikr par temps (Méthode rythmique)',
         theme_color: '#0f172a', /* tailwind slate-900 */
         background_color: '#0f172a',
         display: 'standalone',
