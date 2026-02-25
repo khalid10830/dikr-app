@@ -85,7 +85,7 @@ export const translations = {
 
     // V4: Onboarding & Add Dikr
     onboardingTitle: "Bienvenue sur Dikr App",
-    onboardingDesc: "Votre compagnon pour un rappel constant d'Allah.",
+    onboardingDesc: "Ton compagnon pour un rappel constant d'Allah.",
     methodTitle: "Méthode Rythmique",
     methodDesc: "Une expérience de dhikr apaisante basée sur le rythme et le temps.",
     onboardingStep1Title: "1. Calibrez votre rythme",
