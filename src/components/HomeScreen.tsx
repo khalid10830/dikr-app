@@ -147,7 +147,7 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
     const shareData = {
       title: t(lang, 'shareTitle'),
       text: t(lang, 'shareDesc'),
-      url: window.location.origin,
+      url: `${window.location.origin}/?ref=app`,
     };
     try {
       if (navigator.share) {

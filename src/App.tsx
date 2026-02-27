@@ -42,6 +42,7 @@ function App() {
   const [elapsedTime, setElapsedTime] = useState(savedSession ? savedSession.elapsedTime : 0);
   const [startTime, setStartTime] = useState(savedSession ? (savedSession.isTimerRunning ? Date.now() - savedSession.elapsedTime : savedSession.startTime) : 0);
   const [sessionEvents, setSessionEvents] = useState<SessionEvent[]>(savedSession ? savedSession.sessionEvents : []);
+  const [isSessionSaved, setIsSessionSaved] = useState(false);
 
   // --- PERSIST ACTIVE SESSION ---
   useEffect(() => {
@@ -96,6 +97,7 @@ function App() {
   const resetTimer = () => {
     setIsTimerRunning(false);
     setElapsedTime(0);
+    setIsSessionSaved(false);
     if (lastVibratedCountRef) lastVibratedCountRef.current = 0;
   };
 
@@ -110,13 +112,18 @@ function App() {
       setIsTimerRunning(false);
       setSessionEvents(prev => [...prev, { time: Date.now(), action: 'pause' }]);
       triggerTargetReachedFeedback(lang, currentDikr.name, targetCount, elapsedTime);
+      
+      // Auto-save session
+      if (!isSessionSaved) {
+        handleSaveSession();
+      }
     }
     
     if (isTimerRunning && currentCount > 0 && currentCount % 33 === 0 && currentCount !== lastVibratedCountRef.current) {
       triggerVibration(50);
       lastVibratedCountRef.current = currentCount;
     }
-  }, [currentCount, targetCount, sessionMode, isTimerRunning, currentDikr, lang, elapsedTime]);
+  }, [currentCount, targetCount, sessionMode, isTimerRunning, currentDikr, lang, elapsedTime, isSessionSaved]);
 
   // --- HANDLERS ---
   const handleCompleteOnboarding = () => {
@@ -161,8 +168,8 @@ function App() {
     setHistory([log, ...history]);
   };
 
-  const handleFinishSession = (shouldSave: boolean) => {
-    if (shouldSave && currentDikr && currentDikr.durationMs) {
+  const handleSaveSession = () => {
+    if (currentDikr && currentDikr.durationMs) {
       const count = Math.floor(elapsedTime / currentDikr.durationMs);
       if (count > 0 || sessionMode === 'calibration') {
          const newSession: DikrSession = {
@@ -175,8 +182,15 @@ function App() {
            mode: sessionMode,
            target: targetCount
          };
-         setHistory([newSession, ...history]);
+         setHistory(prev => [newSession, ...prev]);
+         setIsSessionSaved(true);
       }
+    }
+  };
+
+  const handleFinishSession = (shouldSave: boolean) => {
+    if (shouldSave && !isSessionSaved) {
+      handleSaveSession();
     }
     localStorage.removeItem('active-session-backup');
     resetTimer();
@@ -201,6 +215,7 @@ function App() {
     setTargetCount(target);
     setSessionEvents([{ time: Date.now(), action: 'start' }]);
     setCurrentScreen(mode === 'calibration' ? 'calibration' : 'session');
+    setIsSessionSaved(false);
   };
 
   const isSessionActive = elapsedTime > 0;
