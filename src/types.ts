@@ -28,3 +28,15 @@ export interface SessionEvent {
   time: number; // timestamp
   action: 'start' | 'pause' | 'resume';
 }
+
+export interface ActiveSessionBackup {
+  selectedDikrId: string | null;
+  sessionMode: SessionMode;
+  targetCount: number | undefined;
+  isTimerRunning: boolean;
+  elapsedTime: number;
+  startTime: number;
+  sessionEvents: SessionEvent[];
+  currentScreen: Screen;
+  lastUpdate: number;
+}

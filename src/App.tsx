@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
-import type { Screen, SessionMode, DikrSession, DikrItem, Language, SessionEvent } from './types';
+import { useState, useEffect, useRef } from 'react';
+import type { Screen, SessionMode, DikrSession, DikrItem, Language, SessionEvent, ActiveSessionBackup } from './types';
 import { useLocalStorage } from './hooks/useLocalStorage';
+import { CheckCircle2 } from 'lucide-react';
 import { OnboardingScreen } from './components/OnboardingScreen';
 import { HomeScreen } from './components/HomeScreen';
 import { CalibrationScreen } from './components/CalibrationScreen';
@@ -8,6 +9,7 @@ import { SessionScreen } from './components/SessionScreen';
 import { HistoryScreen } from './components/HistoryScreen';
 import { Analytics } from '@vercel/analytics/react';
 import { t } from './i18n';
+import { triggerVibration, triggerTargetReachedFeedback } from './utils/feedback';
 
 // Default Dikrs (empty if they want to choose themselves, or minimal)
 const baseDikrs: DikrItem[] = [];
@@ -23,19 +25,41 @@ function App() {
     document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
   }, [lang]);
 
+  // --- SESSION RECOVERY ---
+  const savedSessionStr = typeof window !== 'undefined' ? localStorage.getItem('active-session-backup') : null;
+  const savedSession = savedSessionStr ? JSON.parse(savedSessionStr) as ActiveSessionBackup : null;
+
   // --- NAVIGATION STATE ---
-  const [currentScreen, setCurrentScreen] = useState<Screen>(hasSeenOnboarding ? 'home' : 'onboarding');
+  const [currentScreen, setCurrentScreen] = useState<Screen>(savedSession ? savedSession.currentScreen : (hasSeenOnboarding ? 'home' : 'onboarding'));
   const [isOnboardingFromHome, setIsOnboardingFromHome] = useState(false);
-  const [selectedDikrId, setSelectedDikrId] = useState<string | null>(null);
-  const [sessionMode, setSessionMode] = useState<SessionMode>('free');
-  const [targetCount, setTargetCount] = useState<number | undefined>(undefined);
+  const [selectedDikrId, setSelectedDikrId] = useState<string | null>(savedSession ? savedSession.selectedDikrId : null);
+  const [sessionMode, setSessionMode] = useState<SessionMode>(savedSession ? savedSession.sessionMode : 'free');
+  const [targetCount, setTargetCount] = useState<number | undefined>(savedSession ? savedSession.targetCount : undefined);
   const [historyFilterId, setHistoryFilterId] = useState<string | undefined>(undefined);
 
   // --- GLOBAL TIMER STATE (Lifting State Up) ---
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const [startTime, setStartTime] = useState(0);
-  const [sessionEvents, setSessionEvents] = useState<SessionEvent[]>([]);
+  const [isTimerRunning, setIsTimerRunning] = useState(savedSession ? savedSession.isTimerRunning : false);
+  const [elapsedTime, setElapsedTime] = useState(savedSession ? savedSession.elapsedTime : 0);
+  const [startTime, setStartTime] = useState(savedSession ? (savedSession.isTimerRunning ? Date.now() - savedSession.elapsedTime : savedSession.startTime) : 0);
+  const [sessionEvents, setSessionEvents] = useState<SessionEvent[]>(savedSession ? savedSession.sessionEvents : []);
+
+  // --- PERSIST ACTIVE SESSION ---
+  useEffect(() => {
+    if (selectedDikrId) {
+      const backup: ActiveSessionBackup = {
+        selectedDikrId,
+        sessionMode,
+        targetCount,
+        isTimerRunning,
+        elapsedTime,
+        startTime,
+        sessionEvents,
+        currentScreen,
+        lastUpdate: Date.now()
+      };
+      localStorage.setItem('active-session-backup', JSON.stringify(backup));
+    }
+  }, [currentScreen, selectedDikrId, sessionMode, targetCount, isTimerRunning, elapsedTime, startTime, sessionEvents]);
 
   useEffect(() => {
     let interval: number;
@@ -72,9 +96,27 @@ function App() {
   const resetTimer = () => {
     setIsTimerRunning(false);
     setElapsedTime(0);
+    if (lastVibratedCountRef) lastVibratedCountRef.current = 0;
   };
 
   const currentDikr = dikrs.find(d => d.id === selectedDikrId) || null;
+  const currentCount = currentDikr?.durationMs ? Math.floor(elapsedTime / currentDikr.durationMs) : 0;
+
+  // --- BACKGROUND GLOBAL SESSION TRACKING ---
+  const lastVibratedCountRef = useRef(savedSession ? Math.floor(savedSession.elapsedTime / (currentDikr?.durationMs || 1000)) : 0);
+  
+  useEffect(() => {
+    if (sessionMode === 'target' && targetCount && currentCount >= targetCount && isTimerRunning && currentDikr) {
+      setIsTimerRunning(false);
+      setSessionEvents(prev => [...prev, { time: Date.now(), action: 'pause' }]);
+      triggerTargetReachedFeedback(lang, currentDikr.name, targetCount, elapsedTime);
+    }
+    
+    if (isTimerRunning && currentCount > 0 && currentCount % 33 === 0 && currentCount !== lastVibratedCountRef.current) {
+      triggerVibration(50);
+      lastVibratedCountRef.current = currentCount;
+    }
+  }, [currentCount, targetCount, sessionMode, isTimerRunning, currentDikr, lang, elapsedTime]);
 
   // --- HANDLERS ---
   const handleCompleteOnboarding = () => {
@@ -136,6 +178,7 @@ function App() {
          setHistory([newSession, ...history]);
       }
     }
+    localStorage.removeItem('active-session-backup');
     resetTimer();
     setSelectedDikrId(null);
     setCurrentScreen('home');
@@ -161,6 +204,7 @@ function App() {
   };
 
   const isSessionActive = elapsedTime > 0;
+  const isTargetReachedBadge = sessionMode === 'target' && targetCount && currentCount >= targetCount;
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-slate-900 text-slate-50 w-full overflow-hidden relative font-sans">
@@ -169,10 +213,18 @@ function App() {
       {isSessionActive && currentScreen !== 'session' && currentScreen !== 'calibration' && currentScreen !== 'onboarding' && (
         <button 
           onClick={() => setCurrentScreen(sessionMode === 'calibration' ? 'calibration' : 'session')}
-          className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-blue-600 hover:bg-blue-500 text-white px-4 py-3 rounded-full shadow-2xl flex items-center justify-center gap-3 text-sm font-semibold animate-bounce"
+          className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-50 px-4 py-3 rounded-full shadow-2xl flex items-center justify-center gap-3 text-sm font-semibold transition-colors
+            ${isTargetReachedBadge 
+              ? 'bg-emerald-600 hover:bg-emerald-500 text-white animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.5)]' 
+              : 'bg-blue-600 hover:bg-blue-500 text-white animate-bounce'
+            }`}
         >
-          <div className="w-2.5 h-2.5 bg-white rounded-full animate-pulse"></div>
-          {t(lang, 'sessionOngoing')}
+          {isTargetReachedBadge ? (
+            <CheckCircle2 size={16} className="text-white" />
+          ) : (
+            <div className="w-2.5 h-2.5 bg-white rounded-full animate-pulse"></div>
+          )}
+          {isTargetReachedBadge ? t(lang, 'sessionFinishedBadge') : t(lang, 'sessionOngoing')}
         </button>
       )}
 
@@ -245,6 +297,7 @@ function App() {
         <HistoryScreen 
           lang={lang}
           history={history}
+          dikrs={dikrs}
           filterDikrId={historyFilterId}
           filterDikrName={historyFilterId ? dikrs.find(d => d.id === historyFilterId)?.name : undefined}
           onBack={() => setCurrentScreen('home')}
@@ -258,6 +311,13 @@ function App() {
           onDeleteDikr={(id) => {
             handleDeleteDikr(id);
             setCurrentScreen('home');
+          }}
+          onAddManualSession={(session) => {
+            const newSession: DikrSession = {
+              ...session,
+              id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString()
+            };
+            setHistory([newSession, ...history]);
           }}
         />
       )}

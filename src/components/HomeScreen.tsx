@@ -145,9 +145,9 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
 
   const handleShare = async () => {
     const shareData = {
-      title: t(lang, 'appTitle'),
-      text: t(lang, 'onboardingDesc'),
-      url: window.location.href,
+      title: t(lang, 'shareTitle'),
+      text: t(lang, 'shareDesc'),
+      url: window.location.origin,
     };
     try {
       if (navigator.share) {

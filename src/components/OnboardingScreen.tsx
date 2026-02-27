@@ -97,6 +97,13 @@ export function OnboardingScreen({ lang, onChangeLang, onFinish, fromHomeScreen 
 
           </div>
         </div>
+        
+        {/* Fatwa disclaimer at the bottom */}
+        <div className="w-full text-start bg-slate-800/20 border border-slate-700/50 p-3 mt-4 rounded-xl animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+          <p className="text-[11px] text-slate-400/80 leading-relaxed italic">
+            {t(lang, 'fatwaDisclaimer')}
+          </p>
+        </div>
       </main>
 
       {/* Action footer */}
