@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { ArrowLeft, Play, Pause, X as XIcon, CheckCircle2, Check } from 'lucide-react';
 import type { SessionMode, DikrItem, Language, SessionEvent } from '../types';
 import { t } from '../i18n';
@@ -19,37 +19,6 @@ interface Props {
   onNavigateHome: () => void;
 }
 
-const playTargetReachedSound = () => {
-  try {
-    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-    if (!AudioContextClass) return;
-    const ctx = new AudioContextClass();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    
-    osc.type = 'sine';
-    const now = ctx.currentTime;
-    
-    osc.frequency.setValueAtTime(1046.50, now);
-    gain.gain.setValueAtTime(0, now);
-    gain.gain.linearRampToValueAtTime(0.5, now + 0.05);
-    gain.gain.linearRampToValueAtTime(0, now + 0.15);
-    
-    osc.frequency.setValueAtTime(1318.51, now + 0.2);
-    gain.gain.setValueAtTime(0, now + 0.2);
-    gain.gain.linearRampToValueAtTime(0.5, now + 0.25);
-    gain.gain.linearRampToValueAtTime(0, now + 0.4);
-    
-    osc.start(now);
-    osc.stop(now + 0.5);
-  } catch (e) {
-    console.warn('Audio play failed', e);
-  }
-};
-
 export function SessionScreen({ 
   lang, dikr, mode, targetCount, elapsedTime, isRunning, sessionEvents, onToggle, onCancel, onFinish, onNavigateHome 
 }: Props) {
@@ -63,51 +32,6 @@ export function SessionScreen({
 
   const durationMs = dikr.durationMs || 1000; 
   const currentCount = Math.floor(elapsedTime / durationMs);
-
-  const vibrate = (pattern: number | number[]) => {
-    if (typeof window !== 'undefined' && navigator.vibrate) {
-      try {
-        navigator.vibrate(pattern);
-      } catch (e) {}
-    }
-  };
-
-  useEffect(() => {
-    if (mode === 'target' && targetCount && currentCount >= targetCount && isRunning) {
-      onToggle(); 
-      vibrate([200, 100, 200, 100, 500]); 
-      playTargetReachedSound();
-      
-      if ('Notification' in window && Notification.permission === 'granted') {
-        const title = t(lang, 'targetReached');
-        const options = {
-          body: t(lang, 'targetMsg', { targetCount: targetCount || 0, name: dikr.name, time: Math.floor(elapsedTime / 1000) }),
-          icon: '/icon-192x192.png',
-          badge: '/icon-192x192.png',
-          vibrate: [200, 100, 200, 100, 500],
-        };
-        
-        if (navigator.serviceWorker) {
-          navigator.serviceWorker.ready.then(registration => {
-            registration.showNotification(title, options);
-          }).catch(() => {
-            try { new Notification(title, options); } catch (e) {}
-          });
-        } else {
-          try { new Notification(title, options); } catch (e) {}
-        }
-      }
-    }
-  }, [currentCount, targetCount, mode, isRunning, onToggle, lang, dikr.name, elapsedTime]);
-
-  const lastVibratedCount = useRef(0);
-  useEffect(() => {
-    if (currentCount > 0 && currentCount % 33 === 0 && lastVibratedCount.current !== currentCount) {
-      vibrate(50);
-      lastVibratedCount.current = currentCount;
-    }
-  }, [currentCount]);
-
 
   const progress = mode === 'target' && targetCount 
     ? Math.min(100, (currentCount / targetCount) * 100)

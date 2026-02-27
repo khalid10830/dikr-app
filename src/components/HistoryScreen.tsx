@@ -1,12 +1,13 @@
-import { useState } from 'react';
-import { ArrowLeft, Trash2, History, Target, Edit3 } from 'lucide-react';
-import type { DikrSession, Language } from '../types';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, Trash2, History, Target, Edit3, Plus, X } from 'lucide-react';
+import type { DikrSession, DikrItem, Language } from '../types';
 import { t } from '../i18n';
 import { getStatsByFilter, formatTime } from '../utils/stats';
 
 interface Props {
   lang: Language;
   history: DikrSession[];
+  dikrs: DikrItem[];
   filterDikrId?: string;
   filterDikrName?: string;
   onBack: () => void;
@@ -14,9 +15,10 @@ interface Props {
   onDeleteSession: (id: string) => void;
   onEditDikr: (id: string, newName: string) => void;
   onDeleteDikr: (id: string) => void;
+  onAddManualSession: (session: Omit<DikrSession, 'id'>) => void;
 }
 
-export function HistoryScreen({ lang, history, filterDikrId, filterDikrName, onBack, onClear, onDeleteSession, onEditDikr, onDeleteDikr }: Props) {
+export function HistoryScreen({ lang, history, dikrs, filterDikrId, filterDikrName, onBack, onClear, onDeleteSession, onEditDikr, onDeleteDikr, onAddManualSession }: Props) {
   const [modalConfig, setModalConfig] = useState<{
     isOpen: boolean;
     type: 'prompt' | 'confirm';
@@ -25,6 +27,24 @@ export function HistoryScreen({ lang, history, filterDikrId, filterDikrName, onB
     onConfirm: (val?: string) => void;
   }>({ isOpen: false, type: 'confirm', title: '', onConfirm: () => {} });
   const [modalInput, setModalInput] = useState('');
+  
+  const calibratedDikrs = dikrs.filter(d => d.durationMs);
+  const [isManualEntryOpen, setIsManualEntryOpen] = useState(false);
+  const [manualEntryData, setManualEntryData] = useState({
+    dikrId: filterDikrId || (calibratedDikrs.length > 0 ? calibratedDikrs[0].id : ''),
+    count: '',
+    date: '' 
+  });
+
+  useEffect(() => {
+    if (isManualEntryOpen) {
+      setManualEntryData({
+        dikrId: filterDikrId || (calibratedDikrs.length > 0 ? calibratedDikrs[0].id : ''),
+        count: '',
+        date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)
+      });
+    }
+  }, [isManualEntryOpen, filterDikrId, dikrs]);
 
   const displayHistory = filterDikrId 
     ? history.filter(s => s.dikrId === filterDikrId)
@@ -70,6 +90,15 @@ export function HistoryScreen({ lang, history, filterDikrId, filterDikrName, onB
         </h2>
         {filterDikrId ? (
           <div className="flex items-center gap-1">
+            {dikrs.find(d => d.id === filterDikrId)?.durationMs && (
+               <button
+                  onClick={() => setIsManualEntryOpen(true)}
+                  className="p-2 text-blue-500 hover:text-blue-400 transition-colors"
+                  title={t(lang, 'addManualEntry') || "Ajout manuel"}
+               >
+                  <Plus size={20} />
+               </button>
+            )}
             <button 
               onClick={() => {
                 setModalInput(filterDikrName || '');
@@ -102,21 +131,40 @@ export function HistoryScreen({ lang, history, filterDikrId, filterDikrName, onB
             </button>
           </div>
         ) : displayHistory.length > 0 ? (
-          <button 
-            onClick={() => {
-              setModalConfig({
-                isOpen: true,
-                type: 'confirm',
-                title: t(lang, 'clearHistoryLabel') || 'Vider l\'historique',
-                message: t(lang, 'clearHistoryPrompt'),
-                onConfirm: () => onClear()
-              });
-            }}
-            className={`p-2 ${lang === 'ar' ? '-ml-2' : '-mr-2'} text-red-500 hover:text-red-400 transition-colors`}
-          >
-            <Trash2 size={20} />
-          </button>
-        ) : <div className="w-10" />}
+          <div className="flex items-center gap-1">
+            <button
+               onClick={() => setIsManualEntryOpen(true)}
+               className="p-2 text-blue-500 hover:text-blue-400 transition-colors"
+               title={t(lang, 'addManualEntry') || "Ajout manuel"}
+            >
+               <Plus size={20} />
+            </button>
+            <button 
+              onClick={() => {
+                setModalConfig({
+                  isOpen: true,
+                  type: 'confirm',
+                  title: t(lang, 'clearHistoryLabel') || 'Vider l\'historique',
+                  message: t(lang, 'clearHistoryPrompt'),
+                  onConfirm: () => onClear()
+                });
+              }}
+              className={`p-2 ${lang === 'ar' ? '-ml-2' : '-mr-2'} text-red-500 hover:text-red-400 transition-colors`}
+            >
+              <Trash2 size={20} />
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1">
+            <button
+               onClick={() => setIsManualEntryOpen(true)}
+               className={`p-2 ${lang === 'ar' ? '-ml-2' : '-mr-2'} text-blue-500 hover:text-blue-400 transition-colors`}
+               title={t(lang, 'addManualEntry') || "Ajout manuel"}
+            >
+               <Plus size={20} />
+            </button>
+          </div>
+        )}
       </header>
 
       {/* DASHBOARD STATS */}
@@ -243,6 +291,74 @@ export function HistoryScreen({ lang, history, filterDikrId, filterDikrName, onB
                 {modalConfig.type === 'confirm' ? (t(lang, 'delete') || 'Supprimer') : (t(lang, 'saveBtn') || 'Enregistrer')}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {isManualEntryOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" onClick={() => setIsManualEntryOpen(false)} />
+          <div className="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-2xl shadow-2xl z-10 flex flex-col animate-in zoom-in-95 duration-200 overflow-hidden" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+            <header className="flex items-center justify-between p-4 border-b border-slate-700">
+               <h3 className="text-lg font-semibold text-white">{t(lang, 'manualEntryTitle') || "Ajout manuel"}</h3>
+               <button onClick={() => setIsManualEntryOpen(false)} className="text-slate-400 hover:text-white"><X size={24} /></button>
+            </header>
+            
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const dikr = dikrs.find(d => d.id === manualEntryData.dikrId);
+              if (!dikr || !manualEntryData.count) return;
+              
+              onAddManualSession({
+                dikrId: dikr.id,
+                dikrName: dikr.name,
+                count: parseInt(manualEntryData.count, 10),
+                durationMs: (dikr.durationMs || 1000) * parseInt(manualEntryData.count, 10),
+                date: new Date(manualEntryData.date).getTime(),
+                mode: 'free'
+              });
+              setIsManualEntryOpen(false);
+            }} className="p-4 flex flex-col gap-4">
+              
+              {!filterDikrId && (
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm text-slate-400">{t(lang, 'dikrLabel') || "Dikr"}</label>
+                  <select 
+                    required
+                    value={manualEntryData.dikrId}
+                    onChange={e => setManualEntryData(prev => ({...prev, dikrId: e.target.value}))}
+                    className="bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="" disabled>{t(lang, 'selectDikr') || "Sélectionner / Select"}</option>
+                    {calibratedDikrs.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+                  </select>
+                </div>
+              )}
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm text-slate-400">{t(lang, 'countLabel') || "Nombre / Count"}</label>
+                <input 
+                  type="number" required min="1"
+                  value={manualEntryData.count}
+                  onChange={e => setManualEntryData(prev => ({...prev, count: e.target.value}))}
+                  className="bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm text-slate-400">{t(lang, 'dateLabel') || "Date"}</label>
+                <input 
+                  type="datetime-local" required
+                  value={manualEntryData.date}
+                  onChange={e => setManualEntryData(prev => ({...prev, date: e.target.value}))}
+                  className="bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 [color-scheme:dark]"
+                />
+              </div>
+
+              <button type="submit" className="mt-2 w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 rounded-xl transition-colors">
+                {t(lang, 'addBtn') || "Ajouter"}
+              </button>
+            </form>
           </div>
         </div>
       )}
