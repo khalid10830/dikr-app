@@ -243,7 +243,7 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
             
             <div className="flex justify-between items-start gap-4" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
               <div className="flex flex-col gap-2 flex-1 min-w-0">
-                <h3 className="text-lg font-medium text-white leading-tight break-words">{dikr.name}</h3>
+                <h3 className="text-lg font-medium text-white leading-tight break-words" dir="auto">{dikr.name}</h3>
                 
                 {dikr.durationMs && (
                    <div className="text-xs text-slate-400 bg-slate-800/60 px-2 py-1.5 rounded-md inline-block self-start border border-slate-700/30">
@@ -445,7 +445,7 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
                       className="text-left bg-slate-800/50 hover:bg-slate-700 p-4 rounded-xl border border-slate-700/50 transition-colors"
                       dir={lang === 'ar' ? 'rtl' : 'ltr'}
                     >
-                      <span className="text-slate-200 text-sm leading-relaxed block">{tpl}</span>
+                      <span className="text-slate-200 text-sm leading-relaxed block" dir="auto">{tpl}</span>
                     </button>
                   ))}
                 </div>
