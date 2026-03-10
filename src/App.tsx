@@ -10,6 +10,7 @@ import { HistoryScreen } from './components/HistoryScreen';
 import { Analytics } from '@vercel/analytics/react';
 import { t } from './i18n';
 import { triggerVibration, triggerTargetReachedFeedback } from './utils/feedback';
+import { InstallBanner } from './components/InstallBanner';
 
 // Default Dikrs (empty if they want to choose themselves, or minimal)
 const baseDikrs: DikrItem[] = [];
@@ -224,6 +225,7 @@ function App() {
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-slate-900 text-slate-50 w-full overflow-hidden relative font-sans">
       <Analytics />
+      <InstallBanner lang={lang} />
       
       {isSessionActive && currentScreen !== 'session' && currentScreen !== 'calibration' && currentScreen !== 'onboarding' && (
         <button 

@@ -85,6 +85,8 @@ export const translations = {
     todayCountShort: "Aujourd'hui :",
 
     // V4: Onboarding & Add Dikr
+    installPromptInApp: "⚠️ Vous naviguez dans une application restreinte. Pour pouvoir installer l'application Dikr, touchez l'icône de la boussole (Safari) pour ouvrir ce site dans votre navigateur principal.",
+    installPromptSafari: "Pour installer l'application, touchez l'icône Partager en bas de l'écran, puis choisissez 'Sur l'écran d'accueil'.",
     onboardingTitle: "Bienvenue sur Dikr App",
     onboardingDesc: "Ton compagnon pour un rappel constant d'Allah.",
     methodTitle: "Méthode Rythmique",
@@ -108,6 +110,8 @@ export const translations = {
     installApp: "Installer l'App",
     installAppShort: "Installer",
     installIOSInstruction: "Pour installer sur iOS : touchez l'icône Partager puis 'Sur l'écran d'accueil'.",
+    installAndroidInstruction: "Pour installer sur Android : ouvrez le menu de votre navigateur et choisissez 'Ajouter à l'écran d'accueil'.",
+    installDesktopInstruction: "Pour installer l'app : utilisez un navigateur compatible (Chrome/Edge/Safari) et cherchez l'option d'installation dans le menu ou la barre d'adresse.",
     showTutorial: "Voir le tutoriel",
     backBtn: "Retour",
     onboardingPitch: "Ne perds plus jamais le fil de ton Dikr.\nQue tu sois au volant, en marchant ou dans une file d'attente.\nUne expérience pure : 100% gratuit, hors-ligne et sans pub.",
@@ -186,6 +190,8 @@ export const translations = {
     timeSpent: "Time Spent",
     todayCountShort: "Today:",
 
+    installPromptInApp: "⚠️ You are browsing in a restricted app. To install the Dikr app, tap the compass icon (Safari) to open this site in your main browser.",
+    installPromptSafari: "To install the app, tap the Share icon at the bottom of the screen, then choose 'Add to Home Screen'.",
     onboardingTitle: "Welcome to Dikr App",
     onboardingDesc: "Your companion for constant remembrance of Allah.",
     methodTitle: "Rhythmic Method",
@@ -209,6 +215,8 @@ export const translations = {
     installApp: "Install App",
     installAppShort: "Install",
     installIOSInstruction: "To install on iOS: Tap the Share icon then 'Add to Home Screen'.",
+    installAndroidInstruction: "To install on Android: open your browser menu and choose 'Add to Home Screen'.",
+    installDesktopInstruction: "To install the app: use a compatible browser (Chrome/Edge/Safari) and look for the install option in the menu or address bar.",
     showTutorial: "See tutorial",
     backBtn: "Back",
     onboardingPitch: "Never lose track of your Dikr again.\nWhether you're driving, walking, or waiting in line.\nA pure experience: 100% free, offline and ad-free.",
@@ -287,6 +295,8 @@ export const translations = {
     timeSpent: "الوقت المقضي",
     todayCountShort: "اليوم:",
 
+    installPromptInApp: "⚠️ أنت تتصفح من داخل تطبيق مقيد. لتتمكن من تثبيت تطبيق الذكر، اضغط على أيقونة البوصلة (سفاري) لفتح هذا الموقع في متصفحك الرئيسي.",
+    installPromptSafari: "لتثبيت التطبيق، اضغط على أيقونة المشاركة أسفل الشاشة، ثم اختر 'إضافة إلى الشاشة الرئيسية'.",
     onboardingTitle: "مرحباً بك في تطبيق الذكر",
     onboardingDesc: "رفيقك لذكر الله الدائم.",
     methodTitle: "الطريقة الإيقاعية",
@@ -310,6 +320,8 @@ export const translations = {
     installApp: "تثبيت التطبيق",
     installAppShort: "تثبيت",
     installIOSInstruction: "للتثبيت على iOS: اضغط على أيقونة المشاركة ثم 'إضافة إلى الشاشة الرئيسية'.",
+    installAndroidInstruction: "للتثبيت على أندرويد: افتح قائمة المتصفح واختر 'إضافة إلى الشاشة الرئيسية'.",
+    installDesktopInstruction: "لتثبيت التطبيق: استخدم متصفحًا متوافقًا (كروم/إيدج/سفاري) وابحث عن خيار التثبيت في القائمة أو شريط العنوان.",
     showTutorial: "عرض الشرح",
     backBtn: "رجوع",
     onboardingPitch: "لا تفقد عد أذكارك بعد اليوم.\nسواء كنت تقود، تمشي، أو في قاعة الانتظار.\nتجربة نقية: مجاني 100%، بدون إعلانات ويعمل بدون إنترنت.",

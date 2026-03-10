@@ -5,6 +5,7 @@ import { t, dikrTemplates } from '../i18n';
 import { getStatsByFilter, formatTime } from '../utils/stats';
 import { SettingsModal } from './SettingsModal';
 import { usePWA } from '../hooks/usePWA';
+import { useDetectInstall } from '../hooks/useDetectInstall';
 
 interface Props {
   lang: Language;
@@ -27,6 +28,7 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
   const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { isStandalone } = usePWA();
+  const { environment } = useDetectInstall();
   
   const [modalConfig, setModalConfig] = useState<{
     isOpen: boolean;
@@ -49,7 +51,13 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) {
-      alert(t(lang, 'installIOSInstruction'));
+      if (environment === 'ios-safari' || environment === 'ios-inapp') {
+        alert(t(lang, 'installIOSInstruction'));
+      } else if (environment === 'android') {
+        alert(t(lang, 'installAndroidInstruction'));
+      } else {
+        alert(t(lang, 'installDesktopInstruction'));
+      }
       return;
     }
     const promptEvent = deferredPrompt as Event & { prompt: () => void, userChoice: Promise<{outcome: string}> };
