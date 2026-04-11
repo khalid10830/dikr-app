@@ -51,7 +51,9 @@ export function HomeScreen({ lang, onChangeLang, history, dikrs, onAddDikr, onDe
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) {
-      if (environment === 'ios-safari' || environment === 'ios-inapp') {
+      if (environment === 'ios-inapp') {
+        alert(t(lang, 'installPromptInApp'));
+      } else if (environment === 'ios-safari') {
         alert(t(lang, 'installIOSInstruction'));
       } else if (environment === 'android') {
         alert(t(lang, 'installAndroidInstruction'));
