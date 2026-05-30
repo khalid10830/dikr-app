@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Settings, MessageSquare, Download, Upload, Info, X, RefreshCw, BookOpen } from 'lucide-react';
+import { Settings, MessageSquare, Download, Upload, Info, X, RefreshCw, BookOpen, ExternalLink } from 'lucide-react';
 import type { Language } from '../types';
 import { t } from '../i18n';
 import { useRegisterSW } from 'virtual:pwa-register/react';
@@ -114,6 +114,39 @@ export function SettingsModal({ lang, isOpen, onClose, onImport, onExport, onSho
               <MessageSquare size={18} className="text-rose-400" />
               <span className="text-sm font-medium">{t(lang, 'reportBug')}</span>
             </button>
+          </div>
+
+          {/* Section: Sister Apps */}
+          <div className="flex flex-col gap-2">
+            <div className="text-xs font-semibold uppercase text-slate-500 mb-1">
+              {t(lang, 'sisterAppsTitle')}
+            </div>
+            <a
+              href="https://tafsiria.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 w-full p-3 rounded-xl bg-slate-700/30 hover:bg-slate-700/50 text-slate-200 transition-colors"
+            >
+              <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 bg-slate-700">
+                <img
+                  src="https://tafsiria.com/favicon.png"
+                  alt="Tafsiria"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    target.style.display = 'none';
+                    if (target.parentElement) {
+                      target.parentElement.innerHTML = '<span class="w-full h-full flex items-center justify-center text-white text-xs font-bold">T</span>';
+                    }
+                  }}
+                />
+              </div>
+              <div className="flex flex-col flex-1 min-w-0">
+                <span className="text-sm font-medium">{t(lang, 'sisterAppTafisira')}</span>
+                <span className="text-xs text-slate-400">{t(lang, 'sisterAppTafisiraDesc')}</span>
+              </div>
+              <ExternalLink size={14} className="text-slate-500 flex-shrink-0" />
+            </a>
           </div>
 
           {/* Section: Version & Mise à jour */}

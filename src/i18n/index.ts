@@ -138,7 +138,10 @@ export const translations = {
     selectDikr: "Sélectionner",
     countLabel: "Nombre",
     durationMinutesLabel: "Durée (min)",
-    dateLabel: "Date"
+    dateLabel: "Date",
+    sisterAppsTitle: "Applications sœurs",
+    sisterAppTafisira: "Tafsiria",
+    sisterAppTafisiraDesc: "Exploration du Coran par IA"
   },
   en: {
     appTitle: "﴿ فَاذْكُرُونِي أَذْكُرْكُمْ ﴾",
@@ -243,7 +246,10 @@ export const translations = {
     selectDikr: "Select",
     countLabel: "Count",
     durationMinutesLabel: "Duration (min)",
-    dateLabel: "Date"
+    dateLabel: "Date",
+    sisterAppsTitle: "Sister Apps",
+    sisterAppTafisira: "Tafsiria",
+    sisterAppTafisiraDesc: "AI-powered Quran exploration"
   },
   ar: {
     appTitle: "﴿ فَاذْكُرُونِي أَذْكُرْكُمْ ﴾",
@@ -348,7 +354,10 @@ export const translations = {
     selectDikr: "اختر",
     countLabel: "العدد",
     durationMinutesLabel: "المدة (دقائق)",
-    dateLabel: "التاريخ"
+    dateLabel: "التاريخ",
+    sisterAppsTitle: "التطبيقات الشقيقة",
+    sisterAppTafisira: "تفسيرية",
+    sisterAppTafisiraDesc: "استكشاف القرآن بالذكاء الاصطناعي"
   }
 };
 
