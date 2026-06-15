@@ -124,7 +124,7 @@ export function SettingsModal({ lang, isOpen, onClose, onImport, onExport, onSho
             <a
               href="https://tafsiria.com/?utm_source=dikr.app&utm_medium=referral&utm_campaign=sister_app"
               target="_blank"
-              rel="noopener noreferrer"
+              rel="noopener"
               className="flex items-center gap-3 w-full p-3 rounded-xl bg-slate-700/30 hover:bg-slate-700/50 text-slate-200 transition-colors"
             >
               <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 bg-slate-700">
