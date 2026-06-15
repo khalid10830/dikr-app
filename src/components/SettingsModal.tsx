@@ -122,7 +122,7 @@ export function SettingsModal({ lang, isOpen, onClose, onImport, onExport, onSho
               {t(lang, 'sisterAppsTitle')}
             </div>
             <a
-              href="https://tafsiria.com"
+              href="https://tafsiria.com/?utm_source=dikr.app&utm_medium=referral&utm_campaign=sister_app"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 w-full p-3 rounded-xl bg-slate-700/30 hover:bg-slate-700/50 text-slate-200 transition-colors"
